@@ -7,9 +7,9 @@ title: How to deploy Azure Blob Container with files using ARM templates
 comments: true
 ---
 
-I know, I know, this is a really specific problem. But one that I encountered and would like to share how I solve it. If you have alternate or downright better ways to do it, please feel free to add them in comments.
+I know, I know, this is a really specific problem. But one that I encountered, and when I Googled/Bing'd it, I was not able to find any way to do it. I was able to fix it, and you might too, but I thought I should use my blog to share how I solved it, hoping it might come in handy who wants to achieve something similar. If you have alternate or downright better ways to do it, please feel free to add them in comments.
 
-So I was writing some ARM (Azure Resource Manager) templates and I wanted to create a Azure Data Lake Storage Account (I'll use ADLS subsequently, since the full name is a handful otherwise) and a blob container as well. But I wanted this template to also populate the blob container with some existing files.
+So I was writing some ARM (Azure Resource Manager) templates and I wanted to create a Azure Data Lake Storage Account (I'll use ADLS subsequently, since the full name is a handful otherwise) and a blob container as well. But I wanted this template to also populate the blob container with some existing files that lie at a public URL.
 
 Usually, for this, first you need to create the Azure Storage Account and Container using an ARM template and then copy your files manually using any of the the various options available (Upload from portal, Storage Explorer, Azure CLI, Azure Powershell), but I wanted my ARM template to do this, since I wanted to automate of creating an already "initialized" container state without manual intervention. For that, I dipped my toes into what ARM providers, [Deployment Scripts](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deployment-script-template).
 
@@ -143,4 +143,6 @@ We'll create a deployment script, and provide the identity above for it to use. 
 
 We are passing the name of the storage account and the name of the container as parameters to this deployment script. You can also parameterize the file URL if needed.
 
-That's it for this one. I hope my post helps you if you have to automate something similar. If you feel this can be achieved in a better way, feel free to "@" me at my socials or comment on my blog. See you in the next one.
+The fun part here is, you can also use `az storage` commands to download files from an ADLS account in the script and then upload them to some other ADLS (if you dont want to put your files at a public URL). In that case, you will need to give the managed identity access to that ADLS and tweak the script accordingly. And speaking of the managed identity, you can also limit the permissions to this identity if **Contributor** seems too broad of a permission.
+
+That's it for this one. I hope my post helps you if you have to automate something similar. If you feel this can be achieved in a better or different way, feel free to "@" me at my socials or comment on my blog. See you in the next one.
