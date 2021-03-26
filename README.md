@@ -6,15 +6,21 @@
 
 https://mitesh1612.github.io/blog/
 
-# My Blog
+# Mitesh Shah's Blog
 
+Hey there, this is my personal blog setup which is _powered by [fastpages](https://github.com/fastai/fastpages)_.
 
-_powered by [fastpages](https://github.com/fastai/fastpages)_
+## See the blog live
 
+<div>
+<a href="https://mitesh1612.github.io/blog" target="_blank">
+<img src="https://raw.githubusercontent.com/narative/gatsby-theme-novela-example/master/assets/gatsby-theme-novela-cta-demo.jpg" alt="gatsby-novela-theme live demo" width="295px" />
+</a>
+</div>
 
 ## What To Do Next?
 
-Great!  You have setup your repo.  Now its time to start writing content.  Some helpful links:
+Here are some useful documents for this blog.
 
 - [Writing Blogs With Jupyter](https://github.com/fastai/fastpages#writing-blog-posts-with-jupyter)
 
@@ -24,6 +30,4 @@ Great!  You have setup your repo.  Now its time to start writing content.  Some 
 
 - [(Optional) Preview Your Blog Locally](_fastpages_docs/DEVELOPMENT.md)
 
-Note: you may want to remove example blog posts from the `_posts`,  `_notebooks` or `_word` folders (but leave them empty, don't delete these folders) if you don't want these blog posts to appear on your site.
-
-Please use the [nbdev & blogging channel](https://forums.fast.ai/c/fastai-users/nbdev/48) in the fastai forums for any questions or feature requests.
+Do try out fastpages for your own blog.
