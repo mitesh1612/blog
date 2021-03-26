@@ -6,8 +6,8 @@
 # https://learn-the-web.algonquindesign.ca/topics/markdown-yaml-cheat-sheet/#yaml
 # https://learnxinyminutes.com/docs/yaml/
 
-title: fastpages
-description: An easy to use blogging platform with support for Jupyter Notebooks.
+title: Mitesh Shah's Blog
+description: Mitesh Shah's Developer Blog, made using Fastpages
 github_username: mitesh1612
 # you can comment the below line out if your repo name is not different than your baseurl
 github_repo: "blog"
@@ -35,15 +35,16 @@ url: "https://mitesh1612.github.io" # the base hostname & protocol for your site
 # 3. You must replace the parameter `baseurl` in _action_files/settings.ini with the same value as you set here but WITHOUT QUOTES.
 #
 baseurl: "/blog" # the subpath of your site, e.g. "/blog".
+permalink: /:year/:month/:day/:title
 
 # Github and twitter are optional:
 minima:
   social_links:
-    twitter: fastdotai
-    github: fastai
+    twitter: mitesh_1612
+    github: mitesh1612
 
 # Set this to true to get LaTeX math equation support
-use_math: 
+use_math: true 
 
 # Set this to true to display the summary of your blog post under your title on the Home page.
 show_description: true
@@ -64,6 +65,7 @@ exclude:
   - docker-compose.yml
   - action.yml
   - Makefile
+  - demo-post.txt
 
 # this setting allows you to keep pages organized in the _pages folder
 include:
@@ -72,7 +74,7 @@ include:
 # This specifies what badges are turned on by default for notebook posts.
 default_badges:
   github: true
-  binder: true
+  binder: false
   colab: true
 
 # Escape HTML in post descriptions
