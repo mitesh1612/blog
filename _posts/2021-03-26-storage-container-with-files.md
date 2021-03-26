@@ -28,7 +28,7 @@ I don't want this post to be a puff piece on deployment scripts, or a tutorial o
 
 ## Enough talk, show me the ARM template
 
-So here's how my template works. First we will create a storage account, and a container for that storage account. This is textbook template for ADLS, nothing special here. (I've only show the `resources` section for brevity)
+So here's how my template works. First we will create a storage account, and a container for that storage account. This is textbook template for ADLS, nothing special here. (I've only shown the `resources` section for brevity)
 
 ```json
 [
@@ -110,7 +110,7 @@ Now we will add a deployment script resource. Since the deployment script needs 
 
 Now the actual solution to our problem (sorry for the long boilerplate).
 
-We'll create a deployment script, and provide the identity above for it to use. Then we will download our data/files using a `wget` command. Then we can use any of the methods `az storage blob` CLI commands provide to upload it to the container. In my case, I had a directory with about 20 files to put into the container. So I zipped them and made a public URL of them to download. Then I unzip in the deployment script and use the `upload-batch` command to upload the whole unzipped directory. The following template does that. Note I am using an inline script here, since the script was small, and I actually wanted to show the script contents (The important part here is the script, rest is just minor details).
+We'll create a deployment script, and provide the identity above for it to use. Then we will download our data/files using a `wget` command. Then we can use any of the methods `az storage blob` CLI commands provide to upload it to the container. In my case, I had a directory with about 20 files to put into the container. So I zipped them and made a public URL of them to download. Then I unzip it in the deployment script and use the `upload-batch` command to upload the whole unzipped directory. The following template does that. Note I am using an inline script here, since the script was small, and I actually wanted to show the script contents (The important part here is the script, rest is just minor details).
 
 ```json
 {
@@ -134,7 +134,7 @@ We'll create a deployment script, and provide the identity above for it to use. 
         "AzCliVersion": "2.2.0",
         "timeout": "PT30M",
         "arguments": "[concat(parameters('storageAccountName'), ' ', concat(parameters('containerName')))]",
-        "scriptContent": "wget -O files.zip 'https://some-public-url/files.zip' ; unzip files.zip ; az storage blob upload-batch -d $2 -s corpus --account-name $1",
+        "scriptContent": "wget -O files.zip 'https://some-public-url/files.zip' ; unzip files.zip ; az storage blob upload-batch -d $2 -s datafolder --account-name $1",
         "cleanupPreference": "OnSuccess",
         "retentionInterval": "P1D"
     }
