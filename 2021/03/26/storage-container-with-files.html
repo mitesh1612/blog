@@ -93,7 +93,7 @@ window.onload = wrap_img;
        • <span class="read-time" title="Estimated read time">
     
     
-      5 min read
+      6 min read
     
 </span></p>
 
@@ -119,22 +119,22 @@ window.onload = wrap_img;
 
 <p>So I was writing some ARM (Azure Resource Manager) templates and I wanted to create a Azure Data Lake Storage Account (I’ll use ADLS subsequently, since the full name is a handful otherwise) and a blob container as well. But I wanted this template to also populate the blob container with some existing files that lie at a public URL.</p>
 
-<p>Usually, for this, first you need to create the Azure Storage Account and Container using an ARM template and then copy your files manually using any of the the various options available (Upload from portal, Storage Explorer, Azure CLI, Azure Powershell), but I wanted my ARM template to do this, since I wanted to automate of creating an already “initialized” container state without manual intervention. For that, I dipped my toes into what ARM providers, <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deployment-script-template">Deployment Scripts</a>.</p>
+<p>Usually, for this, first you need to create the Azure Storage Account and Container using an ARM template and then copy your files manually using any of the the various options available (Upload from portal, Storage Explorer, Azure CLI, Azure Powershell), but I wanted my ARM template to do this, since I wanted to automate of creating an already “initialized” container state without manual intervention. For that, I dipped my toes into a functionality ARM provides called <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deployment-script-template">Deployment Scripts</a>.</p>
 
 <h2 id="what-are-deployment-scripts">What are Deployment Scripts?</h2>
 
-<p>Basically, Deployment Scripts provide you an option to run certain (mostly dataplane) operations as part of your ARM deployment. At the time of writing, ARM supports 2 variants of Deployment Scripts:</p>
+<p>Basically, Deployment Scripts provide you an option to run certain scripts for (mostly dataplane) operations as part of your ARM deployment. Those are useful if you want to perform some operation everytime with an ARM deployment. At the time of writing, ARM supports 2 variants of Deployment Scripts:</p>
 
 <ol>
-  <li>Az Powershell Deployment Scripts - If Powershell is your scripting language of choice</li>
-  <li>Az CLI Deployment Scripts - If you’re more of a “bash” person</li>
+  <li>Az Powershell Deployment Scripts - If Powershell is your scripting language of choice and you’re comfy with Azure Powershell commands</li>
+  <li>Az CLI Deployment Scripts - If you’re more of a “bash” person and use Az CLI a lot</li>
 </ol>
 
 <p>I don’t have a preference of bash vs. Powershell, but I am well versed with Az CLI and hence I chose option 2.</p>
 
 <p>The overview of this solution is simple. First create a storage account and a container using an ARM template, and then run a deployment script that downloads required files and uploads them to this created storage account. Simple, right? Since deployment scripts runtime is authenticated, I dont need to perform manual login, and it just works! ♥</p>
 
-<p>I don’t want this post to be a puff piece on deployment scripts, or a tutorial on how to use them. I believe Azure has some nicely written documentation for it. Follow along for the actual template I used.</p>
+<p>I don’t want this post to be a puff piece on deployment scripts, or a tutorial on how to use them. I believe Azure has some nicely written documentation for it, so if you need reference on deployment scripts, please use the documentation. Follow along for the actual template I used.</p>
 
 <h2 id="enough-talk-show-me-the-arm-template">Enough talk, show me the ARM template</h2>
 
@@ -188,7 +188,7 @@ window.onload = wrap_img;
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div></div>
 
-<p>Now we will add a deployment script resource. Since the deployment script needs a logged in user’s context, we also need to create a <a href="https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview">User Assigned Managed Identity</a>. After that, we also need to give the managed identity access to the resource group this template is being deployed to, so that it can actually run our az cli scripts. The following template achieves that</p>
+<p>Now we will add a deployment script resource. Since the deployment script needs a logged in user’s context, we also need to create a <a href="https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview">User Assigned Managed Identity</a>. After that, we also need to give the managed identity appropriate access so that it can perform required operations. For simplicity, I am going to give <strong>Contributor</strong> access to the identity on the resource group this template is being deployed to. The following template achieves that</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
@@ -218,7 +218,7 @@ window.onload = wrap_img;
 
 <p>Now the actual solution to our problem (sorry for the long boilerplate).</p>
 
-<p>We’ll create a deployment script, and provide the identity above for it to use. Then we will download our data/files using a <code class="language-plaintext highlighter-rouge">wget</code> command. Then we can use any of the methods <code class="language-plaintext highlighter-rouge">az storage blob</code> CLI commands provide to upload it to the container. In my case, I had a directory with about 20 files to put into the container. So I zipped them and made a public URL of them to download. Then I unzip in the deployment script and use the <code class="language-plaintext highlighter-rouge">batch-upload</code> command to upload the whole unzipped directory. The following template does that. Note I am using an inline script here, since the script was small, and I actually wanted to show the script contents (The important part here is the script, rest is just minor details).</p>
+<p>We’ll create a deployment script, and provide the identity above for it to use. Then we will download our data/files using a <code class="language-plaintext highlighter-rouge">wget</code> command. Then we can use any of the methods <code class="language-plaintext highlighter-rouge">az storage blob</code> CLI commands provide to upload it to the container. In my case, I had a directory with about 20 files to put into the container. So I zipped them and made a public URL of them to download. Then I unzip in the deployment script and use the <code class="language-plaintext highlighter-rouge">upload-batch</code> command to upload the whole unzipped directory. The following template does that. Note I am using an inline script here, since the script was small, and I actually wanted to show the script contents (The important part here is the script, rest is just minor details).</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
     </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Microsoft.Resources/deploymentScripts"</span><span class="p">,</span><span class="w">
@@ -250,7 +250,7 @@ window.onload = wrap_img;
 
 <p>We are passing the name of the storage account and the name of the container as parameters to this deployment script. You can also parameterize the file URL if needed.</p>
 
-<p>The fun part here is, you can also use <code class="language-plaintext highlighter-rouge">az storage</code> commands to download files from an ADLS account in the script and then upload them to some other ADLS (if you dont want to put your files at a public URL). In that case, you will need to give the managed identity access to that ADLS and tweak the script accordingly. And speaking of the managed identity, you can also limit the permissions to this identity if <strong>Contributor</strong> seems too broad of a permission.</p>
+<p>The fun part here is, you can also use <code class="language-plaintext highlighter-rouge">az storage</code> commands to download files from an ADLS account in the script and then upload them to the new ADLS (if you dont want to put your files at a public URL). In that case, you will need to give the managed identity access to that ADLS and tweak the script accordingly. And speaking of the managed identity, you can also limit the permissions to this identity if <strong>Contributor</strong> seems too broad of a permission.</p>
 
 <p>That’s it for this one. I hope my post helps you if you have to automate something similar. If you feel this can be achieved in a better or different way, feel free to “@” me at my socials or comment on my blog. See you in the next one.</p>
 
