@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>The different kinds of Unit Tests | Mitesh Shah’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="The different kinds of Unit Tests" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Discover various patterns of Unit Tests with simple examples and how you can use them to improve your UTs game." />
+<meta property="og:description" content="Discover various patterns of Unit Tests with simple examples and how you can use them to improve your UTs game." />
+<link rel="canonical" href="https://mitesh1612.github.io/blog/2020/11/27/different-types-UTs" />
+<meta property="og:url" content="https://mitesh1612.github.io/blog/2020/11/27/different-types-UTs" />
+<meta property="og:site_name" content="Mitesh Shah’s Blog" />
+<meta property="og:image" content="https://mitesh1612.github.io/blog/images/2020-11-27-different-types-UTs/hero.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-11-27T00:00:00-06:00" />
+<script type="application/ld+json">
+{"url":"https://mitesh1612.github.io/blog/2020/11/27/different-types-UTs","@type":"BlogPosting","headline":"The different kinds of Unit Tests","dateModified":"2020-11-27T00:00:00-06:00","datePublished":"2020-11-27T00:00:00-06:00","image":"https://mitesh1612.github.io/blog/images/2020-11-27-different-types-UTs/hero.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://mitesh1612.github.io/blog/2020/11/27/different-types-UTs"},"description":"Discover various patterns of Unit Tests with simple examples and how you can use them to improve your UTs game.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://mitesh1612.github.io/blog/feed.xml" title="Mitesh Shah's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Mitesh Shah&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">The different kinds of Unit Tests</h1><p class="page-description">Discover various patterns of Unit Tests with simple examples and how you can use them to improve your UTs game.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-11-27T00:00:00-06:00" itemprop="datePublished">
+        Nov 27, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      8 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#testing">testing</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#C#">C#</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#unit-tests">unit-tests</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>In my previous post, I talked about various kinds of Tests. As a developer working for a mature codebase, the most common tests that you will need to write are Unit Tests, and its a good practice tbh.</p>
+
+<p>While working on my team’s project (which was in a fairly early stage), I saw various kinds of Unit Tests and researched a bit myself on how to write some good UTs. Today I plan to share the same in this post. I’ll talk about various types of Unit Tests and when you might want to use each.</p>
+
+<p>A quick disclaimer here. Since I work on a C# project, and have the most experience in writing C# (or Python tests), my examples are in C# with NUnit. But language or testing frameworks are subjective and there is no <em>one size fits all</em>. My main goal here is to capture these patterns so that you can use them in your own exploits of writing Unit Tests.</p>
+
+<h2 id="example-scenario">Example Scenario</h2>
+
+<p>While this may get refuted later, lets have an example scenario. Consider we have a code for which we want to write a Unit Test. This code takes a User Name and Password, and assuming they are valid, generates an access token for the user and stores it in a cookie. Here is some example code for the same:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">SignInUser</span> <span class="p">:</span> <span class="n">ISiteActions</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nf">SignInUser</span><span class="p">(</span><span class="n">ICookierHelper</span> <span class="n">cookieHelper</span><span class="p">,</span> <span class="n">ITokenGenerator</span> <span class="n">tokenGenerator</span><span class="p">,</span> <span class="n">IDataProvider</span> <span class="n">userDataProvider</span><span class="p">,</span> <span class="n">IPasswordHasher</span> <span class="n">hasher</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">cookieHelper</span> <span class="p">=</span> <span class="n">cookieHelper</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">tokenGenerator</span> <span class="p">=</span> <span class="n">tokenGenerator</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">userDataProvider</span> <span class="p">=</span> <span class="n">userDataProvider</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">passwordHasher</span> <span class="p">=</span> <span class="n">passwordHasher</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="kt">bool</span> <span class="nf">Execute</span><span class="p">(</span><span class="kt">string</span> <span class="n">username</span><span class="p">,</span> <span class="kt">string</span> <span class="n">password</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">user</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="n">userDataProvider</span><span class="p">.</span><span class="nf">getUser</span><span class="p">(</span><span class="n">username</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">user</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span> <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(!</span><span class="k">this</span><span class="p">.</span><span class="n">passwordHasher</span><span class="p">.</span><span class="nf">DoesMatch</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">user</span><span class="p">.</span><span class="n">salt</span><span class="p">,</span> <span class="n">user</span><span class="p">.</span><span class="n">hash</span><span class="p">))</span> <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+        <span class="kt">var</span> <span class="n">accessToken</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="n">tokenGenerator</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">user</span><span class="p">.</span><span class="n">userId</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">cookieHelper</span><span class="p">.</span><span class="nf">setCookie</span><span class="p">(</span><span class="n">Constants</span><span class="p">.</span><span class="n">CookieName</span><span class="p">,</span> <span class="n">accessToken</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Again this is just to set some context. These patterns can be easily applied to any kind of code we are testing.</p>
+
+<h2 id="arrange-act-assert">Arrange-Act-Assert</h2>
+
+<p>This is the de-facto, canonical version of the Unit Test. This basically describes the structure of a Unit Test. Unit Tests usually test a single piece of code (say a public class method) and check whether one effect (or output of that method) was correct. Depending upon the complexity of the code being tested, some setup might be necessary, before the code under test can be executed. This pattern of setting up proper conditions for a test, running the code under test and then verifying the result is called <strong>arrange-act-assert</strong> pattern. For example, say we want to test the <code class="language-plaintext highlighter-rouge">Execute</code> method for the above code with a valid user name but invalid password, here is how we might write it.</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">SignInUserTests</span> <span class="p">:</span> <span class="n">SiteTestFrameworkBase</span>
+<span class="p">{</span>
+    <span class="p">[</span><span class="n">Test</span><span class="p">]</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">ShouldFailFor_InvalidPassword</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// Arrange</span>
+        <span class="kt">var</span> <span class="n">userSignIn</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">SignInUser</span><span class="p">(</span><span class="n">GetMock</span><span class="p">&lt;</span><span class="n">ICookieHelper</span><span class="p">&gt;(),</span> <span class="n">GetMock</span><span class="p">&lt;</span><span class="n">ITokenGenerator</span><span class="p">&gt;(),</span> <span class="n">GetMock</span><span class="p">&lt;</span><span class="n">IDataProvider</span><span class="p">&gt;(),</span> <span class="n">GetMock</span><span class="p">&lt;</span><span class="n">IPasswordHasher</span><span class="p">&gt;());</span>
+        <span class="kt">var</span> <span class="n">username</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">GetValidUserName</span><span class="p">();</span>
+        <span class="kt">var</span> <span class="n">password</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">MakePasswordDirty</span><span class="p">(</span><span class="n">username</span><span class="p">);</span>
+
+        <span class="c1">// Act</span>
+        <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">userSignIn</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">);</span>
+
+        <span class="c1">// Assert</span>
+        <span class="n">Assert</span><span class="p">.</span><span class="nf">IsFalse</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>In this over simplified code, we are using Mock Dependencies to create an instance of the <code class="language-plaintext highlighter-rouge">SignInUser</code> class. We are also getting a valid username and getting an invalid password for that user. This all setup is part of <strong>Arrange</strong>. After that, we test the method in our <strong>Act</strong> section by passing our inputs and then validate the output in <strong>Assert</strong> section.</p>
+
+<p>This code is an example of a strong Arrange-Act-Assert Pattern. This pattern is great when a specific situation is being tested or a set of specific inputs are tested. It is also great when you want to verify a single thing about the execution of your code.</p>
+
+<p>But what happens when there are multiple side-effects of your code, your code doing multiple things?</p>
+
+<h2 id="one-act-many-assertions">One Act, Many Assertions</h2>
+
+<p>Sometimes, while testing some code, the code might have multiple side effects and we might want to make multiple assertions about these multiples effects that the code had. This seems simple, instead of having one assert, we can have multiple asserts in the end of our test. Many people are opposed to this, and while not being a strong problem, it might become a smell in your code.</p>
+
+<h3 id="why-are-multiple-assertions-a-smell">Why are multiple assertions a smell?</h3>
+
+<p>Consider the case where your test code has multiple assertions in the end. One of the problems with this is that when a test fails, we might need to determine what part of code has failed. In this case, we might need to resort to going through stack traces to find out what actually failed.</p>
+
+<p>Also, in NUnit (and a lot of other testing frameworks) the failure of a single assertion might cause the test execution to stop, so an early failure in this test can mask probable future failures in the test.</p>
+
+<p>There is a solution to this problem, by using a method called <em>specification testing</em> or behavior driven development testing. Specification based testing techniques uses the specification of the program as the point of reference for test data selection.</p>
+
+<p>For example, for the above code, we might want to test when a user successfully logs in, that result comes out <code class="language-plaintext highlighter-rouge">true</code> and the respective cookie is set. Consider the following code:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">SignInUserTests</span> <span class="p">:</span> <span class="n">SiteTestFrameworkBase</span>
+<span class="p">{</span>
+    <span class="p">[</span><span class="n">SetUp</span><span class="p">]</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">SetUp</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">userSignIn</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">SignInUser</span><span class="p">(</span><span class="n">GetMock</span><span class="p">&lt;</span><span class="n">ICookieHelper</span><span class="p">&gt;(),</span> <span class="n">GetMock</span><span class="p">&lt;</span><span class="n">ITokenGenerator</span><span class="p">&gt;(),</span> <span class="n">GetMock</span><span class="p">&lt;</span><span class="n">IDataProvider</span><span class="p">&gt;(),</span> <span class="n">GetMock</span><span class="p">&lt;</span><span class="n">IPasswordHasher</span><span class="p">&gt;());</span>
+        <span class="kt">var</span> <span class="n">username</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">GetValidUserName</span><span class="p">();</span>
+        <span class="kt">var</span> <span class="n">password</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">GetValidPassword</span><span class="p">(</span><span class="n">username</span><span class="p">);</span>
+        <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">userSignIn</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="p">[</span><span class="n">Test</span><span class="p">]</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">ShouldSucceed</span><span class="p">()</span> <span class="p">=&gt;</span> <span class="n">Assert</span><span class="p">.</span><span class="nf">IsTrue</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+
+    <span class="p">[</span><span class="n">Test</span><span class="p">]</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">ShouldSetCookie</span><span class="p">()</span> <span class="p">=&gt;</span> <span class="n">GetMock</span><span class="p">&lt;</span><span class="n">ICookieHelper</span><span class="p">&gt;().</span><span class="nf">VerifyCalled</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="nf">SetCookie</span><span class="p">(</span><span class="n">Constants</span><span class="p">.</span><span class="n">CookieName</span><span class="p">,</span> <span class="n">TestConstants</span><span class="p">.</span><span class="n">TokenValue</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Since the above two results can fail indepedently from each other (we might not be able to set the cookie for some reason, for example), so putting both these assertions in the same test doesn’t make sense.</p>
+
+<p>This type of test is great when your piece of code has multiple effects that can succeed or fail independently.</p>
+
+<h2 id="test-cases">Test Cases</h2>
+
+<p>I like to call this pattern, <em>Multiple Arranges</em>, to match with the above title, but that’s probably wrong. This type of test is useful when we want to test a lot of different inputs matched with a lot of different outputs. Here we can do away with our example since it won’t be really helpful for this type of test.</p>
+
+<p>Assume, we wrote an awesome function <code class="language-plaintext highlighter-rouge">ConvertToEmoji</code> that can convert the text description of an emoji to the actual emoji and we want to validate lots of different inputs and validate their outputs. We could write an <em>Arrange-Act-Assert</em> pattern type test for each input but that would have a lot of duplicate code and we want to maintain our test code maintainable.</p>
+
+<p>NUnit has a great feature to write specifically these type of tests that can scale well (stay tuned after the example to know what to do if your test framework doesn’t have this feature).</p>
+
+<p>This is how this type of test can be written in NUnit.</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">EmojiConverterTests</span>
+<span class="p">{</span>
+    <span class="p">[</span><span class="nf">TestCase</span><span class="p">(</span><span class="s">"smile"</span><span class="p">,</span> <span class="s">"😀"</span><span class="p">)]</span>
+    <span class="p">[</span><span class="nf">TestCase</span><span class="p">(</span><span class="s">"poop"</span><span class="p">,</span> <span class="s">"💩"</span><span class="p">)]</span>
+    <span class="p">[</span><span class="nf">TestCase</span><span class="p">(</span><span class="s">"cry"</span><span class="p">,</span> <span class="s">"😪"</span><span class="p">)]</span>
+    <span class="p">[</span><span class="nf">TestCase</span><span class="p">(</span><span class="s">"diamond"</span><span class="p">,</span> <span class="s">"💎"</span><span class="p">)]</span>
+    <span class="p">[</span><span class="nf">TestCase</span><span class="p">(</span><span class="s">"ballon"</span><span class="p">,</span> <span class="s">"🎈"</span><span class="p">)]</span>
+    <span class="p">[</span><span class="nf">TestCase</span><span class="p">(</span><span class="s">"thumbs up"</span><span class="p">,</span> <span class="s">"👍"</span><span class="p">)]</span>
+    <span class="p">[</span><span class="nf">TestCase</span><span class="p">(</span><span class="s">"pizza"</span><span class="p">,</span> <span class="s">"🍕"</span><span class="p">)]</span>
+    <span class="p">[</span><span class="nf">TestCase</span><span class="p">(</span><span class="s">"fire"</span><span class="p">,</span> <span class="s">"🔥"</span><span class="p">)]</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">ConversionTests</span><span class="p">(</span><span class="kt">string</span> <span class="n">description</span><span class="p">,</span> <span class="kt">string</span> <span class="n">emoji</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Assert</span><span class="p">.</span><span class="nf">AreEqual</span><span class="p">(</span><span class="n">EmojiConverter</span><span class="p">.</span><span class="nf">ConvertToEmoji</span><span class="p">(</span><span class="n">description</span><span class="p">),</span> <span class="n">emoji</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="what-if-your-test-library-doesnt-support-this">What if your test library doesn’t support this?</h3>
+
+<p>Say your framework doesn’t support this type of feature, what can you do?</p>
+
+<p>One way is that maybe you can have some sort of collection to store your input-output pairs and then iterate over the collection. It’s not quite as slick versus when this is built in the test library but it can still let you remove duplicate code and more importantly, <strong>let you add new tests easily</strong>. Example Code:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">void</span> <span class="nf">ConversionTests</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">List</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">inputs</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">GetEmojiInputs</span><span class="p">();</span>
+    <span class="n">List</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">outputs</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">GetEmojiOutputs</span><span class="p">();</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span><span class="n">i</span><span class="p">&lt;</span><span class="n">inputs</span><span class="p">.</span><span class="n">Count</span><span class="p">;</span><span class="n">i</span><span class="p">++)</span>
+    <span class="p">{</span>
+        <span class="n">Assert</span><span class="p">.</span><span class="nf">AreEqual</span><span class="p">(</span><span class="n">EmojiConverter</span><span class="p">.</span><span class="nf">ConvertToEmoji</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">outputs</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>These type of tests are quite common for conversion of client contracts of an API to your server models or your server models to your database entity models (having separate models is actually quite a good pattern), where in we test with a valid set of inputs and invalid set of inputs (their number usually depends on the complexity of the objects being converted). Sometimes, we might not be able to pass in values of the test cases directly, then we can probably read the objects from a file system as well.</p>
+
+<p>For example:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">ClientServerModelsConverterTests</span>
+<span class="p">{</span>
+    <span class="p">[</span><span class="nf">TestCase</span><span class="p">(</span><span class="s">"/inputs/valid1"</span><span class="p">,</span> <span class="s">"/outputs/valid1"</span><span class="p">)]</span>
+    <span class="p">[</span><span class="nf">TestCase</span><span class="p">(</span><span class="s">"/inputs/valid2"</span><span class="p">,</span> <span class="s">"/outputs/valid2"</span><span class="p">)]</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">ConversionTests</span><span class="p">(</span><span class="kt">string</span> <span class="n">inputPath</span><span class="p">,</span> <span class="kt">string</span> <span class="n">outputPath</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">inputObject</span> <span class="p">=</span> <span class="n">ReadFromFilePath</span><span class="p">&lt;</span><span class="n">ClientObj</span><span class="p">&gt;(</span><span class="n">inputPath</span><span class="p">);</span>
+        <span class="kt">var</span> <span class="n">outputObject</span> <span class="p">=</span> <span class="n">ReadFromFilePath</span><span class="p">&lt;</span><span class="n">ServerObj</span><span class="p">&gt;(</span><span class="n">outputPath</span><span class="p">);</span>
+
+        <span class="n">Assert</span><span class="p">.</span><span class="nf">IsTrue</span><span class="p">(</span><span class="nf">ObjectsAreEqual</span><span class="p">(</span><span class="n">inputObject</span><span class="p">.</span><span class="nf">ToServerObject</span><span class="p">(),</span> <span class="n">outputObject</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>(I know this code might have other issues, like how we can convert two inputs to one, but hey if you are nitpicking into my code, that means you read and understood it and mission accomplished 😎)</p>
+
+<p>This pattern also makes it easy to add new test cases. And using NUnit’s pattern we can easily show that we are testing the conversion process, not just the conversion for one specific input. This lets you explain your intent in test cases quite clearly and that is quite helpful.</p>
+
+<h2 id="what-type-of-test-you-should-use">What type of test you should use?</h2>
+
+<p>As I said, there is <em>no one size fits all</em> and each type of unit test is great in its own context. And when in doubt, the standard arrange-act-assert is a great start!</p>
+
+<p>Also, remember that test is code too. Like production code that will be deployed, we should make testing code more maintainable, avoid duplication and scalable to new cases.</p>
+
+<p>I hope this post and <a href="https://mitesh1612.github.io/blog/A-Primer-on-Different-Kinds-of-Tests/">the previous post</a> gives you some ideas to help your test code be even better that it already is. 😀</p>
+
+<p>Hope you enjoyed this post. If you just discovered my blog, do try reading some other posts from me. You can always connect with me on my socials to discuss or engage in conversations about software development with me.</p>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="mitesh1612/blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/blog/2020/11/27/different-types-UTs" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Mitesh Shah&#39;s Developer Blog, made using Fastpages</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/mitesh1612" title="mitesh1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/mitesh_1612" title="mitesh_1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

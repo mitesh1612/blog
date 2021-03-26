@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>A Primer on Different Kinds of Tests | Mitesh Shah’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="A Primer on Different Kinds of Tests" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Discover different types of tests and testing strategies." />
+<meta property="og:description" content="Discover different types of tests and testing strategies." />
+<link rel="canonical" href="https://mitesh1612.github.io/blog/2020/10/06/software-testing" />
+<meta property="og:url" content="https://mitesh1612.github.io/blog/2020/10/06/software-testing" />
+<meta property="og:site_name" content="Mitesh Shah’s Blog" />
+<meta property="og:image" content="https://mitesh1612.github.io/blog/images/2020-10-06-software-testing/hero.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-10-06T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://mitesh1612.github.io/blog/2020/10/06/software-testing","@type":"BlogPosting","headline":"A Primer on Different Kinds of Tests","dateModified":"2020-10-06T00:00:00-05:00","datePublished":"2020-10-06T00:00:00-05:00","image":"https://mitesh1612.github.io/blog/images/2020-10-06-software-testing/hero.jpg","mainEntityOfPage":{"@type":"WebPage","@id":"https://mitesh1612.github.io/blog/2020/10/06/software-testing"},"description":"Discover different types of tests and testing strategies.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://mitesh1612.github.io/blog/feed.xml" title="Mitesh Shah's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Mitesh Shah&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">A Primer on Different Kinds of Tests</h1><p class="page-description">Discover different types of tests and testing strategies.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-10-06T00:00:00-05:00" itemprop="datePublished">
+        Oct 6, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      8 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#testing">testing</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#python">python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#unit-tests">unit-tests</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>I haven’t been a developer for too long (yet) to justify or even explain the importance of well written tests, especially in your CI system, but over my experience in recent times, I have seen great tests helping me catch a lot of future headaches. That being said, while developing a service end-to-end, I got to see the different kinds of tests and testing strategies and I thought why not “blog my journey” on testing. So buckle up for a fun ride, into the land of testing.</p>
+
+<h2 id="the-importance-of-testing">The Importance of Testing</h2>
+
+<p>If you are working on a decent codebase, chances are that the codebase has its own CI System, whether using GitHub Actions, Azure DevOps, Travis CI, Circle CI, Jenkins. One of the most important tasks for a CI System is to run tests on your codebase, preferably so that merging your PR doesn’t break anything.</p>
+
+<p>This is easier said, than done though. Having slow, long running tests in your Pull Request CI Builds slows down the check-in speed for a developer and makes you wait longer to get your changes merged. On the other hand, removing longer tests for something like Continuous Deployment builds puts you in the hazard of losing reliability and the quality signal of the master (or “main”) branches. Then it becomes a blame game of finding what broke the test and getting it fixed. Surely there must be a better way.</p>
+
+<h2 id="the-different-kinds-of-tests">The different kinds of Tests</h2>
+
+<p>One of the main concerns for a test suite is the confusion around what each test should cover. Your tests might become too broad when they are expected to be focused or too focused when expected to have a broader testing. Thus, it becomes important to think about the kind of test you are writing while writing it. There are various ways to categorize tests. The famous types of tests are:</p>
+
+<ul>
+  <li>Unit Tests</li>
+  <li>Integration Tests</li>
+  <li>Acceptance Tests</li>
+</ul>
+
+<h3 id="unit-tests">Unit Tests</h3>
+
+<p>These are small, micro tests, that test a single class or method, <strong>in isolation</strong> from its dependencies. This part is important. When you isolate the code under test, the tests become more focused and expressive. A test that touches any external resource such as the database (even if it is mock), file system, web service etc. is not a Unit Test. (Or might be? Stay tuned)</p>
+
+<p>The purpose of Unit Tests is to validate that the piece of code under test is functionally correct and giving the proper expected output for a given input. Good Unit Tests also help by providing a documentation on how the class is expected to function for any consumers.</p>
+
+<h4 id="what-are-good-unit-tests">What are good unit tests?</h4>
+
+<p>Good Unit Tests are fast, atomic, isolated, conclusive and generally order independent. Usually they are executed automatically by the CI server on each commit to the version control system.</p>
+
+<p>You should be careful about categorizing tests as Unit Tests. Like Code Smells, there are a lot of smells for Unit Tests like too much setup, long test methods, race conditions, lack of CI Integration. If your Unit Tests have these smells, consider a good refactor styled bath for your codebase.</p>
+
+<p>There are a lot of test frameworks for a lot of different languages, like NUnit for C#, pytest for Python etc. which I don’t plan to cover here, they in general possess pretty good documentation. Although, stay tuned for another post on the various kinds of Unit Tests.</p>
+
+<h3 id="integration-tests">Integration Tests</h3>
+
+<p>You use them when your test requires some kind of an external dependency. So these tests includes testing the code that interacts with some external components like a data access layer, web service, file system etc. These tests provide real value when they use the actual real dependency (and not something mock). But due to this, they are harder to setup and slower to write and run than unit tests. That being said, these tests are absolutely necessary to have some kind of confidence in your test suite.</p>
+
+<p>The primary purpose of these tests is to validate the code that work or manipulates an external system, but they also sometimes validate a portion of the remote system. For example if you use a repository pattern for data access and have a test that performs a <code class="language-plaintext highlighter-rouge">Save()</code> on a database, this test also in part checks the database connection, database engine, the network connection (if not onprem) etc. These kind of tests exercise a large block of code and infrastructure than unit tests, but that makes more brittle.</p>
+
+<h4 id="what-are-good-integration-tests">What are good integration tests?</h4>
+
+<p>Good Integration Tests validate the features of an external system that is used in your application. They do not attempt to cover the full set of functionality. Like Unit Tests, ideally these tests should be atomic, isolated, conclusive and order independent.</p>
+
+<p>Smells for Integration Tests also include too much setup, long test methods, race conditions, lack of continuous integration.</p>
+
+<h3 id="acceptance-tests">Acceptance Tests</h3>
+
+<p>These are the tests that execute your entire stack, maybe not the user interface. Thus there is no usage of any kind of <a href="https://en.wikipedia.org/wiki/Test_double">test doubles</a>  (mock objects/systems). The primary purpose of these tests is validate things like component wire up, application stack integration, basic use cases, system performance and stability. These tests are usually run the least often as they are time consuming to execute and require extensive setup (like deploying your services).</p>
+
+<h3 id="what-are-good-acceptance-tests">What are good acceptance tests?</h3>
+
+<p>Good acceptance tests can be understood by a user and are written in terms common to business. Their code smells include attempting to validate every path through the system.</p>
+
+<p>There are also the category of <strong>UI Tests</strong>, but to be honest, I’m not really experienced much in those to write something meaningful about them, so I’ll be skipping those.</p>
+
+<h2 id="towards-l0l1l2-tests">Towards L0,L1,L2 Tests</h2>
+
+<p>Until now, all that I wrote seems kindo bookish, something you’d read in a Software Engineering book. So let me take you on a real tour of how testing is approached. In <a href="https://docs.microsoft.com/en-us/azure/devops/learn/devops-at-microsoft/shift-left-make-testing-fast-reliable">this wonderful article about DevOps in Microsoft</a>, these guys explain how breaking tests into L0,L1,L2 etc helps them simplify and drastically improve their testing approach.</p>
+
+<p>To hillariously simplify and summarize this article, they divide their tests as L0 and L1 which are still your unit tests and L2 and L3 which are functional/integration/acceptance tests.</p>
+
+<p>Usually, they favour tests with fewest external dependencies and run majority of tests as part of the build process for a commit. If tests aren’t dependent, we could also run them in parellel, which gives faster CI build times. Although such L0 tests cannot test every aspect of the service, but the main point to not write a (functional) L2/L3 test where a (unit) L0 test could give the same information.</p>
+
+<p>Since L2 and L3 tests are functional tests, they should always work with the public API of the product.</p>
+
+<p>When we shift our focus on more L0 tests than L2/L3 tests, we make design implementations that support testability.</p>
+
+<h3 id="shift-left">Shift-Left</h3>
+
+<p><img src="https://docs.microsoft.com/en-us/azure/devops/learn/_img/shift-left.png" alt="Shift Left in Testing" /></p>
+
+<p>This kind of shift left approach lets you finish most of the testing before a change is merged into the master.</p>
+
+<h3 id="the-new-taxonomy-of-testing">The new taxonomy of testing</h3>
+
+<p>In this way, tests were divided into the following categories:</p>
+
+<ul>
+  <li><strong>L0 Tests</strong>: These are the fast, in-memory unit tests, the basic idea of a Unit test to most people as well. These tests depend on the code in the assembly and nothing else. These can be testing your business logic with assertions where given input returns an expected output.</li>
+  <li><strong>L1 Tests</strong>: These are also Unit Tests but might require a Database or File System along with the assembly (can be mock). These dont include deploying the service. The most common tests here are for controller methods. For example say each route of your controller maps to a function, then you test that function (not deploy the controller) in a L1 test.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># The controller route
+</span><span class="o">@</span><span class="n">route</span><span class="p">(</span><span class="o">/</span><span class="p">:</span><span class="n">userId</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">getUser</span><span class="p">(</span><span class="n">userId</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">userDb</span><span class="p">.</span><span class="n">Find</span><span class="p">(</span><span class="n">userId</span><span class="p">)</span>
+
+<span class="c1"># The L1 Test
+# Can set the db context to a mock db
+</span><span class="k">def</span> <span class="nf">test_getUser</span><span class="p">():</span>
+    <span class="k">assert</span><span class="p">(</span><span class="n">getUser</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">user</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p>(This might not look like an actual test for python code, but I wanted to represent how to test controllers without deploying the service and then calling the service api path)</p>
+
+<ul>
+  <li><strong>L2 Tests</strong>: These are Functional tests that run against “testable” service deployment. These require deploying the service but you might mock some service dependencies for ease. For example, deploying the service in a test environment and hitting the public API to perform basic use cases</li>
+  <li><strong>L3 Tests</strong>: These tests run against production and need a full product deployment.</li>
+</ul>
+
+<p>There are some quite good guidelines in the article on how to write good L0 and L2 tests that I strongly insist you to read (<a href="https://docs.microsoft.com/en-us/azure/devops/learn/devops-at-microsoft/shift-left-make-testing-fast-reliable#unit-test-characteristics">Unit Test Characteristics</a> and <a href="https://docs.microsoft.com/en-us/azure/devops/learn/devops-at-microsoft/shift-left-make-testing-fast-reliable#functional-tests-must-be-independent">Making Functional Tests Independent</a>),  since I don’t want to reiterate those same things.</p>
+
+<h2 id="improving-your-test-game">Improving your Test Game</h2>
+
+<p>While I did provide 2 different taxonomies for categorizing tests, these are not the only way to categorize them. I tried to cover the various famous categories and share the example of L0, L1, L2 and L3 tests that was tried and tested (😜) by me. While I might not be super knowledgeable in all the kinds of tests, you can share your experiences and techniques you use to improve your test suites, I’m open to discussion! 😁</p>
+
+<p>If you liked this article, try reading some other articles on this blog. You can always follow me on my socials to connect, discuss with me.</p>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="mitesh1612/blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/blog/2020/10/06/software-testing" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Mitesh Shah&#39;s Developer Blog, made using Fastpages</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/mitesh1612" title="mitesh1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/mitesh_1612" title="mitesh_1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

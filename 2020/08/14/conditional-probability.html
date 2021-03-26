@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Conditional Probability and Families | Mitesh Shah’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Conditional Probability and Families" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A super short introduction to Conditional Probability with a fun tricky problem involving a family and their unknown children." />
+<meta property="og:description" content="A super short introduction to Conditional Probability with a fun tricky problem involving a family and their unknown children." />
+<link rel="canonical" href="https://mitesh1612.github.io/blog/2020/08/14/conditional-probability" />
+<meta property="og:url" content="https://mitesh1612.github.io/blog/2020/08/14/conditional-probability" />
+<meta property="og:site_name" content="Mitesh Shah’s Blog" />
+<meta property="og:image" content="https://mitesh1612.github.io/blog/images/2020-08-14-conditional-probability/hero.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-14T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://mitesh1612.github.io/blog/2020/08/14/conditional-probability","@type":"BlogPosting","headline":"Conditional Probability and Families","dateModified":"2020-08-14T00:00:00-05:00","datePublished":"2020-08-14T00:00:00-05:00","image":"https://mitesh1612.github.io/blog/images/2020-08-14-conditional-probability/hero.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://mitesh1612.github.io/blog/2020/08/14/conditional-probability"},"description":"A super short introduction to Conditional Probability with a fun tricky problem involving a family and their unknown children.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://mitesh1612.github.io/blog/feed.xml" title="Mitesh Shah's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Mitesh Shah&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Conditional Probability and Families</h1><p class="page-description">A super short introduction to Conditional Probability with a fun tricky problem involving a family and their unknown children.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-08-14T00:00:00-05:00" itemprop="datePublished">
+        Aug 14, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      3 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#probability">probability</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#python">python</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>So I was reading the book “Data Science from Scratch” by Joel Grus. I came across this nice tricky problem in Conditional Probability mentioned in this book. Let’s take a look</p>
+
+<h2 id="a-quick-refresher-on-conditional-probability">A Quick Refresher on Conditional Probability</h2>
+
+<p>Well if you forgot the definition of conditional probability, here is a small refresher for you. Say there are two events E and F. The probability that E happens given that we know F happens is represented using</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>E</mi><mi mathvariant="normal">∣</mi><mi>F</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(E|F)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mclose">)</span></span></span></span></span>
+
+<p>Mathematically,</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>E</mi><mi mathvariant="normal">∣</mi><mi>F</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>E</mi><mo separator="true">,</mo><mi>F</mi><mo stretchy="false">)</mo><mi mathvariant="normal">/</mi><mi>P</mi><mo stretchy="false">(</mo><mi>F</mi><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi><mi>P</mi><mo stretchy="false">(</mo><mi>E</mi><mo separator="true">,</mo><mi>F</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(E|F) = P(E,F)/P(F). P(E,F)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mclose">)</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mclose">)</span><span class="mord">.</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mclose">)</span></span></span></span></span>
+
+<p>is the probability of both E and F happening.</p>
+
+<p>Well enough of a probability class, lets look at an interesting family now</p>
+
+<h3 id="the-family-and-the-unknown-children">The Family and The Unknown Children</h3>
+
+<p>Say there is a family with two unknown children. If we assume that:</p>
+<ul>
+  <li>Each child is equally likely to be a boy or a girl</li>
+  <li>The gender of the second child is independent of the first child.</li>
+</ul>
+
+<p>Then the event “no girls” has probability 1/4, the event “one girl, one boy” has probability 1/2, and the event “two girls” has probability 1/4.</p>
+
+<p>Now here comes the interesting problem. “What is the probability of the event ‘both children are girls’ (B) conditional on the event that ‘the older child is a girl (G)’?”</p>
+
+<p>This aint a test, so here is how we can easily calculate this using conditional probability</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mi mathvariant="normal">∣</mi><mi>G</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo separator="true">,</mo><mi>G</mi><mo stretchy="false">)</mo><mi mathvariant="normal">/</mi><mi>P</mi><mo stretchy="false">(</mo><mi>G</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(B|G) = P(B,G)/P(G)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mord">∣</span><span class="mord mathdefault">G</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">G</span><span class="mclose">)</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault">G</span><span class="mclose">)</span></span></span></span></span>
+
+<p>T event B and G (“both children are girls and the older child is a girl”) is just the event B. (Once you know that both children are girls, it’s necessarily true that the older child is a girl). Thus,</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mi mathvariant="normal">∣</mi><mi>G</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo separator="true">,</mo><mi>G</mi><mo stretchy="false">)</mo><mi mathvariant="normal">/</mi><mi>P</mi><mo stretchy="false">(</mo><mi>G</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo stretchy="false">)</mo><mi mathvariant="normal">/</mi><mi>P</mi><mo stretchy="false">(</mo><mi>G</mi><mo stretchy="false">)</mo><mo>=</mo><mn>1</mn><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">P(B|G) = P(B,G)/P(G) = P(B)/P(G) = 1/2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mord">∣</span><span class="mord mathdefault">G</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">G</span><span class="mclose">)</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault">G</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mclose">)</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault">G</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mord">/</span><span class="mord">2</span></span></span></span></span>
+
+<p>This is mostly intuitive. Now can you guess “What is the probability of the event ‘both children are girls’ (B) conditional on the event that ‘at least one of the children is a girl’ (L)?”</p>
+
+<p>Surprisingly, the answer to this question is different from the one before. Here is how</p>
+
+<p>As before, the event B and L (“both children are girls and at least one of the children is a girl”) is just the event B. This means we have:</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mi mathvariant="normal">∣</mi><mi>L</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo separator="true">,</mo><mi>L</mi><mo stretchy="false">)</mo><mi mathvariant="normal">/</mi><mi>P</mi><mo stretchy="false">(</mo><mi>L</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo stretchy="false">)</mo><mi mathvariant="normal">/</mi><mi>P</mi><mo stretchy="false">(</mo><mi>L</mi><mo stretchy="false">)</mo><mo>=</mo><mn>1</mn><mi mathvariant="normal">/</mi><mn>3</mn></mrow><annotation encoding="application/x-tex">P(B|L) = P(B,L)/P(L) = P(B)/P(L) = 1/3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mord">∣</span><span class="mord mathdefault">L</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">L</span><span class="mclose">)</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault">L</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mclose">)</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault">L</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mord">/</span><span class="mord">3</span></span></span></span></span>
+
+<p>How can this be the case? Well, if all you know is that at least one of the children is a girl, then it is twice as likely that the family has one boy and one girl than that it has both girls.</p>
+
+<h3 id="still-dont-believe-me">Still don’t believe me?</h3>
+
+<p>Well if you are the doubting kind, we can write a simple Python code to simulate this experiment.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">enum</span><span class="p">,</span> <span class="n">random</span>
+
+<span class="k">class</span> <span class="nc">Kid</span><span class="p">(</span><span class="n">enum</span><span class="p">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">BOY</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">GIRL</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="k">def</span> <span class="nf">random_kid</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Kid</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">([</span><span class="n">Kid</span><span class="p">.</span><span class="n">BOY</span><span class="p">,</span> <span class="n">Kid</span><span class="p">.</span><span class="n">GIRL</span><span class="p">])</span>
+
+<span class="n">both_girls</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">older_girl</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">either_girl</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">random</span><span class="p">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">20200814</span><span class="p">)</span> <span class="c1"># Yep, this post's date
+</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
+    <span class="n">younger</span> <span class="o">=</span> <span class="n">random_kid</span><span class="p">()</span>
+    <span class="n">older</span> <span class="o">=</span> <span class="n">random_kid</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">older</span> <span class="o">==</span> <span class="n">Kid</span><span class="p">.</span><span class="n">GIRL</span><span class="p">:</span>
+        <span class="n">older_girl</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">older</span> <span class="o">==</span> <span class="n">Kid</span><span class="p">.</span><span class="n">GIRL</span> <span class="ow">and</span> <span class="n">younger</span> <span class="o">==</span> <span class="n">Kid</span><span class="p">.</span><span class="n">GIRL</span><span class="p">:</span>
+        <span class="n">both_girls</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">older</span> <span class="o">==</span> <span class="n">Kid</span><span class="p">.</span><span class="n">GIRL</span> <span class="ow">or</span> <span class="n">younger</span> <span class="o">==</span> <span class="n">Kid</span><span class="p">.</span><span class="n">GIRL</span><span class="p">:</span>
+        <span class="n">either_girl</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">"P(both | older):"</span><span class="p">,</span> <span class="n">both_girls</span> <span class="o">/</span> <span class="n">older_girl</span><span class="p">)</span>     <span class="c1"># 0.494 ~ 1/2
+</span><span class="k">print</span><span class="p">(</span><span class="s">"P(both | either): "</span><span class="p">,</span> <span class="n">both_girls</span> <span class="o">/</span> <span class="n">either_girl</span><span class="p">)</span>  <span class="c1"># 0.322 ~ 1/3
+</span></code></pre></div></div>
+
+<p>This indicates how the conditioning of an event affects its probability.</p>
+
+<p>Weirdly, this problem reminds me a lot of the <a href="https://en.wikipedia.org/wiki/Monty_Hall_problem">Monty Hall Problem</a>. Hey if you have any explaination on how this can relate to Monty Hall, you can always @ me at my socials (linked in this blog at various locations!😉) and I’ll probably try to figure out if there is any relation between these two (after I refresh my Probability Course 😋)</p>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="mitesh1612/blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/blog/2020/08/14/conditional-probability" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Mitesh Shah&#39;s Developer Blog, made using Fastpages</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/mitesh1612" title="mitesh1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/mitesh_1612" title="mitesh_1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>The Naivete of Naive Bayes | Mitesh Shah’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="The Naivete of Naive Bayes" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A “from scratch” implementation of Naive Bayes algorithm to find a whether a message is spam or not and a kick off to the series “Machine Learning, with the Maths”" />
+<meta property="og:description" content="A “from scratch” implementation of Naive Bayes algorithm to find a whether a message is spam or not and a kick off to the series “Machine Learning, with the Maths”" />
+<link rel="canonical" href="https://mitesh1612.github.io/blog/2020/08/30/naive-bayes" />
+<meta property="og:url" content="https://mitesh1612.github.io/blog/2020/08/30/naive-bayes" />
+<meta property="og:site_name" content="Mitesh Shah’s Blog" />
+<meta property="og:image" content="https://mitesh1612.github.io/blog/images/2020-08-30-naive-bayes/hero.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-30T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://mitesh1612.github.io/blog/2020/08/30/naive-bayes","@type":"BlogPosting","headline":"The Naivete of Naive Bayes","dateModified":"2020-08-30T00:00:00-05:00","datePublished":"2020-08-30T00:00:00-05:00","image":"https://mitesh1612.github.io/blog/images/2020-08-30-naive-bayes/hero.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://mitesh1612.github.io/blog/2020/08/30/naive-bayes"},"description":"A “from scratch” implementation of Naive Bayes algorithm to find a whether a message is spam or not and a kick off to the series “Machine Learning, with the Maths”","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://mitesh1612.github.io/blog/feed.xml" title="Mitesh Shah's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Mitesh Shah&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">The Naivete of Naive Bayes</h1><p class="page-description">A "from scratch" implementation of Naive Bayes algorithm to find a whether a message is spam or not and a kick off to the series "Machine Learning, with the Maths"</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-08-30T00:00:00-05:00" itemprop="datePublished">
+        Aug 30, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      15 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#probability">probability</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#bayes">bayes</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#python">python</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>So I finally figured out how to render LaTeX equations on my blog, and thus I can use my truly “useful” LaTex knowledge to start a new series on something that truly interests me. Machine Learning and how it works using the relative math in a simpler (and hopefully fun) language, to not scare away people who don’t prefer maths. Welcome to my series <strong>Machine Learning, with the Maths</strong>! (It sounds way cooler in my head!)</p>
+
+<p>The point of this series is not to be a substitute for the plethora of tutorials already available on the topic of Machine Learning. I will try to explain the basic concepts behind each machine learning algorithm, and try to implement it from scratch using Python and NumPy. Maybe you can and hopefully will find better resources, but I hope this can be a good start for you. Plus, where else can I use my superbly huge and comically large Latex equations. Let’s begin, this probably very long post.</p>
+
+<p>I am planning to write an introductory post on Bayes theorem anyways, so I am gonna skip the gory details here and link it in this post when I do end up writing it. Here’s the short intro to Bayes theorem.</p>
+
+<p>There are a lot of ways to define what Bayes theorem represents. It can be thought of way to “reverse” conditional probabilities. The interpretation we will be going through is that it can be used to find the probability of an event occurring, given the probability of another event that has already occurred. We can use (fun?) letters to denote some events, but hey, this is a Machine Learning post, so lets talk like that. Say you have a hypothesis (or an assumption) and you want to find the probability of that assumption, given the data. That is actually what Bayes theorem gives! Don’t believe me?. Let’s look at the equations</p>
+
+<p><img src="/blog/images/2020-08-30-naive-bayes/bayesequation.png" alt="" title="Bayes Theorem Equation" /></p>
+
+<p>This says that the gives the probability of event E occuring, given some event F occurs. Say event <strong>E</strong> represents our hypothesis and <strong>F</strong> represents the probability of obsering the data we observe. Then P(E/F) basically represents how much the data supports our assumption. Hence many times, Bayes theorem is also written like this</p>
+
+<p><img src="/blog/images/2020-08-30-naive-bayes/bayes2.png" alt="" /></p>
+
+<p>The term P(Hypothesis) is also called <strong>prior</strong> or <em>prior beliefs</em>. Why prior? It is the degree of the conviction that the hypothesis is true <em>before we observe</em> the actual data. Remember, prior is the sometimes the trickiest terms to determine (<a href="#the-horrors-of-prior">as mentioned later here</a>). The term P(Hypothesis/Data) is called the <strong>posterior</strong> probability, which represents “the possibility of the hypothesis, given the data”. Posterior is usually build after seeing the data. The term P(Data/Hypothesis) is a fun one. It represents the probability of having obtained the data, given the hypothesis and is called the <strong>likelihood</strong> term. In that way, P(Data) is the <strong>Evidence</strong> we have, or the data we have.</p>
+
+<p>The evidence term can be broken as</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>F</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>F</mi><mi mathvariant="normal">∣</mi><mi>E</mi><mo stretchy="false">)</mo><mi>P</mi><mo stretchy="false">(</mo><mi>E</mi><mo stretchy="false">)</mo><mo>+</mo><mi>P</mi><mo stretchy="false">(</mo><mi>F</mi><mi mathvariant="normal">∣</mi><msup><mi>E</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo stretchy="false">)</mo><mi>P</mi><mo stretchy="false">(</mo><msup><mi>E</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(F) = P(F|E)P(E) + P(F|E&#x27;)P(E&#x27;)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mclose">)</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.051892em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord">∣</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.801892em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.801892em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span>
+
+<p>as well, which might come in handy later.</p>
+
+<h2 id="how-bayes-theorem-is-relevant-to-machine-learning">How Bayes Theorem is relevant to Machine Learning?</h2>
+
+<p>What Bayes theorem gives us is a framework to update our beliefs using evidence. Say you have a prior belief that some event occurs. Then you receive some evidence. You weigh your prior using the likelihood of that evidence happening and get a new belief, the posterior! Now when you get some more new evidence, you replace your prior belief with the posterior found about the event, and get a new posterior belief. And hey if you are not a probability nerd, let me explain this to you in a simpler way. Say you are a man who have lived his whole life inside a cave, and never got out. Now once you get out and see the sun rising on the east, what do you believe? Does it always happen or is this a one off? You assign some “prior” probability of the sun rising in the east. The next day, the sun rises in east again and you update your belief using this evidence. Hmm, sun might rise on east on Mondays and Tuesdays and again update your belief (posterior). The more evidence you gather, the more you are sure about an event, and frankly that’s the crux of Machine Learning as well. We use data, or evidence, to update our beliefs about something.</p>
+
+<p>Now with that out of the way, let’s turn to the example and actually implement this.</p>
+
+<h2 id="spam-me-not">Spam me not!</h2>
+
+<p>The most common use of Naive Bayes, is for spam filters. Let’s look into how we can implement a spam filter using Naive Bayes from scratch.</p>
+
+<p>Sometime ago, there was a scam on twitter where accounts of <a href="https://economictimes.indiatimes.com/magazines/panache/twitter-accounts-of-bill-gates-jeff-bezos-elon-musk-hacked-in-bitcoin-scam/articleshow/76991797.cms">famous people like Elon Musk, Jeff Bezos etc. were hacked for “bitcoin” scams</a>, and let’s try to build a spam filter to help the poor souls who actually sent bitcoins to this scam. Let <strong>S</strong> be the event that <em>the message is spam</em> and <strong>B</strong> be the event that <em>the message contains the word ‘bitcoin’</em>. Baye’s theorem tells us that the conditional probability that the message is spam, given it contains the word bitcoin is:</p>
+
+<p><img src="/blog/images/2020-08-30-naive-bayes/spameqn.png" alt="" /></p>
+
+<p>The numerator is the probability that a message is spam <em>and</em> contains <em>bitcoin</em>, while the denominator is just the probability that a message contains <em>bitcoin</em>. How? P(B/S)P(S) = P(B,S) using the definition of conditional probablity (on which I did write a <a href="http://mitesh1612.github.io/blog/Conditional-Probability-and-Families">fun post you can read here</a>) and the denominator is essentially P(B). In this sense, we can think of this calculation simply representing the <strong>proportion</strong> of <em>bitcoin</em> messages are spam.</p>
+
+<p>Say we have a large number of messages that we know are <strong>spam</strong> and a large collection of messages that we know are <strong>ham</strong> (the word used for not spam commonly). Using that we can easily estimate P(B/S) and P(B/S’). Let’s make an assumption that it is equally likely that a message is spam or ham. Then P(S) = P(S’) = 0.5. Taking out the common term in the above equation, we get</p>
+
+<p><img src="/blog/images/2020-08-30-naive-bayes/spameqn2.png" alt="" /></p>
+
+<p>Now say we find out that 50% of the spam messages contain the word bitcoin but only 1% of non spam messages do, then the probablity that any given <em>bitcoin</em>-containing message is spam is:</p>
+
+<p>0.5/(0.5 + 0.01) = 98%</p>
+
+<h3 id="making-the-spam-filter-more-sophisticated">Making the Spam Filter more Sophisticated</h3>
+
+<p>Let’s bring in equations now (this aint called Machine Learning with Maths for no reason). Imagine we have a vocabulary of many words w1, w2, … ,wn and we say event Xi means the message contains the word wi. Also, since we are imagining so much, imagine that we have some undisclosed process to get an estimate of P(Xi/S) and P(Xi/S’), or basically the probability that a spam/not spam message contains the ith word.</p>
+
+<h3 id="why-is-this-bayes-naive">Why is this Bayes Naive?</h3>
+
+<p>The key to Naive Bayes is making the (big) assumption that the presences (or absences) of each word are independent of one another, conditional on a message being spam or not. Intuitively, this assumption means that knowing whether a certain spam message contains the word <em>bitcoin</em> gives you no information about whether that same message contains the word <em>rolex</em>. In terms of ML terminologies, it makes the assumption that features of a measurement are independent of each other.</p>
+
+<p>In math terms, this assumption means that:</p>
+
+<p><img src="/blog/images/2020-08-30-naive-bayes/naive.png" alt="" title="Naive Assumption of Naive Bayes" /></p>
+
+<p>Now I am not going to lie, this is an extreme assumption, and the reason why it is called Naive Bayes. Say our vocabulary contains only the words “bitcoin” and “gold” and that half the messages that are spam are for “earn bitcoin” and the other half messages that are spam are for “26kt gold”. Thus P(Bitcoin/Spam) = 0.5 and P(Gold/Scam) = 0.5 as well. The probability that a message is spam which contains both “bitcoin” and “gold” is P(Bitcoin, Gold/Spam) = P(Bitcoin/Spam) * P(Gold/Spam) = 0.5 x 0.5 = 0.25. This happens since we assumed away the knowledge that “bitcoin” and “gold” never occur together.</p>
+
+<p>The fun part is that, despite the unrealisticness of this assumption, this model often performs well and has historically been used in actual spam filters.</p>
+
+<p>Using the same equation that we used for the bitcoin only spam filter, we can calculate the probability of a message being spam using the following equation:</p>
+
+<p><img src="/blog/images/2020-08-30-naive-bayes/sophisticatedspam.png" alt="" /></p>
+
+<p>The Naive Bayes assumption allows us to compute each of the probabilities on the right simply by multiplying together the individual probability estimates for each vocabulary word and hence simplifies our calculation.</p>
+
+<h3 id="a-practical-consideration">A practical consideration</h3>
+
+<p>In order to prevent <a href="https://en.wikipedia.org/wiki/Arithmetic_underflow">underflow</a>, where in computers don’t do well with floating-point numbers that are too close to 0, we try to avoid multiplying probability values. Instead of that, we can use <code class="language-plaintext highlighter-rouge">log</code> to multiply probabilities using <code class="language-plaintext highlighter-rouge">log(ab) = log(a) + log(b)</code> and then do an <code class="language-plaintext highlighter-rouge">exp(logx) = x</code> to get back the actual probability. This doesn’t change any of the equations or assumptions, it is just a small practical trick to avoid getting weird answers.</p>
+
+<h3 id="training">Training?</h3>
+
+<p>Now the only problem is estimating P(Xi/S) and P(Xi/S’), the probabilities that a spam message (or nonspam message) contains the word wi. If we have a fair number of “training” messages labeled as spam and not spam, an obvious first try is to estimate P(Xi/S) simply as the fraction of spam messages containing the word wi.</p>
+
+<h4 id="being-smooth">Being Smooth</h4>
+
+<p>While this calculation seems reasonable, it has a huge problem. Say, in our training messages, the word “data” only occurs in nonspam messages. Then we’d estimate P(data/S)=0. The result is that our Naive Bayes classifier would always assign spam probability 0 to any message containing the word <em>data</em>, even a message like “data on free bitcoin and 26 kt gold free.” To avoid this, we usually use some kind of <strong>smoothing</strong>. One of the simplest ways is to choose a pseudo count <code class="language-plaintext highlighter-rouge">k</code> (basically assuming that there are atleast <code class="language-plaintext highlighter-rouge">k</code> spam/ham messages containing the given word i). This gives us the following equation for estimating the probability of seeing the ith word in a spam or ham message as follows:</p>
+
+<p><img src="https://render.githubusercontent.com/render/math?math=P(X_i%7CS)%20%3D%20%5Cfrac%7B(k%20%2B%20%5C%23%20of%20spams%20containing%20w_i)%7D%7B(2k%20%2B%20%5C%23%20of%20spams)%7D%0D" alt="smoothed equation" /></p>
+
+<p>We can do similarly for P(Xi/S’) where in we assume we also saw k additional nonspams containing the word and k additional nonspams not containing the word.</p>
+
+<p>For example, if data occurs in 0/98 spam messages, and if k is 1, we estimate P(data/S) as 1/100 = 0.01, which allows our classifier to still assign some nonzero spam probability to messages that contain the word <em>data</em>.</p>
+
+<h3 id="code-implementation">Code Implementation</h3>
+
+<p>Now that we have all the pieces to build our classifier, the only thing to do is to actually build our classifier. This post contains code snippets but you can find the code on my GitHub repo <a href="https://github.com/mitesh1612/Machine-Learning-From-Scratch/blob/master/NaiveBayes/NaiveBayes.ipynb">here</a></p>
+
+<p>Since we are planning to deal with text data with this classifier, we will be needing to <strong>tokenize</strong> our text to words/tokens. We assume we have a simple function <code class="language-plaintext highlighter-rouge">tokenize()</code> that returns all the tokens in a sentence. (A simple implementation for this would be to convert all text to lower case and then use regular expressions to remove special characters like apostrophes). We can obviously have complex tokenizing pipelines and more text pre-processings, but we will skip that for now.</p>
+
+<p>Our training data consists of the message and a boolean <code class="language-plaintext highlighter-rouge">is_spam</code> indicating whether the message is spam?. We implement our classifier as a class to use it in a better way. The constructor only takes the parameter <code class="language-plaintext highlighter-rouge">k</code>. We also initialize a <code class="language-plaintext highlighter-rouge">set</code> to contain unique tokens, dictionaries  which are counters to track how often each token is seen in spam messages and ham messages, and the counts of how many spam and ham messages it was trained on.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">NaiveBayesClassifier</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+
+        <span class="bp">self</span><span class="p">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">token_spam_counts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">token_ham_counts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">spam_messages</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">ham_messages</span> <span class="o">=</span> <span class="mi">0</span>
+</code></pre></div></div>
+
+<p>Now to implement the <code class="language-plaintext highlighter-rouge">train</code> function for it. According to the message type, we first increment the counts of spam or ham messages. Then we tokenize the message and then increment the spam/ham counts for each token.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">messages</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">message</span><span class="p">.</span><span class="n">is_spam</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">spam_messages</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">ham_messages</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Increment word counts
+</span>        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="n">text</span><span class="p">):</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">tokens</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">message</span><span class="p">.</span><span class="n">is_spam</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">token_spam_counts</span><span class="p">[</span><span class="n">token</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">token_ham_counts</span><span class="p">[</span><span class="n">token</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+</code></pre></div></div>
+
+<p>Ultimately we’ll want to predict P(spam / token). As we saw earlier, to apply Bayes’s theorem we need to know P(token / spam) and P(token / ham) for each token in the vocabulary. So we’ll create a helper function to compute those. (<code class="language-plaintext highlighter-rouge">_probabilities</code>)</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">_probabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+    <span class="s">"""
+    Returns P(token/spam) and P(token/ham)
+    """</span>
+    <span class="n">spam</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">token_spam_counts</span><span class="p">[</span><span class="n">token</span><span class="p">]</span>
+    <span class="n">ham</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">token_ham_counts</span><span class="p">[</span><span class="n">token</span><span class="p">]</span>
+
+    <span class="n">p_token_spam</span> <span class="o">=</span> <span class="p">(</span><span class="n">spam</span> <span class="o">+</span> <span class="bp">self</span><span class="p">.</span><span class="n">k</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">spam_messages</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="p">.</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">p_token_ham</span> <span class="o">=</span> <span class="p">(</span><span class="n">ham</span> <span class="o">+</span> <span class="bp">self</span><span class="p">.</span><span class="n">k</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">ham_messages</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="p">.</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">p_token_spam</span><span class="p">,</span> <span class="n">p_token_ham</span>
+</code></pre></div></div>
+
+<p>Finally we can write a <code class="language-plaintext highlighter-rouge">predict</code> method, and we will use the method of summing logs (<a href="#a-practical-consideration">as mentioned in here</a>). This takes a message and tokenizes it. Then using the helper function it finds the probabilities of each token in the vocabulary. Then adds/multiplies the respective probability of seeing/not seeing the token in te message and then returns the probability of the given message being spam or ham.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="n">text_tokens</span> <span class="o">=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">log_prob_if_spam</span> <span class="o">=</span> <span class="n">log_prob_if_ham</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Iterate through each word in vocabulary
+</span>    <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">tokens</span><span class="p">:</span>
+        <span class="n">prob_if_spam</span><span class="p">,</span> <span class="n">prob_if_ham</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_probabilities</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+
+        <span class="c1"># If token appears in message
+</span>        <span class="c1"># add the log probability of seeing it
+</span>        <span class="k">if</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">text_tokens</span><span class="p">:</span>
+            <span class="n">log_prob_if_spam</span> <span class="o">+=</span> <span class="n">math</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">prob_if_spam</span><span class="p">)</span>
+            <span class="n">log_prob_if_ham</span> <span class="o">+=</span> <span class="n">math</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">prob_if_ham</span><span class="p">)</span>
+        <span class="c1"># Otherwise add the log probability
+</span>        <span class="c1"># of not seeing it which is
+</span>        <span class="c1"># log(1-probability of seeing it)
+</span>        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log_prob_if_spam</span> <span class="o">+=</span> <span class="n">math</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">prob_if_spam</span><span class="p">)</span>
+            <span class="n">log_prob_if_ham</span> <span class="o">+=</span> <span class="n">math</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">prob_if_ham</span><span class="p">)</span>
+    <span class="n">prob_if_spam</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_prob_if_spam</span><span class="p">)</span>
+    <span class="n">prob_if_ham</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_prob_if_ham</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="inspecting-the-model">Inspecting the Model</h3>
+
+<p>We can even have a helper function that “inspect” the model’s innards see which words are indicative of spam/not spam.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">p_spam_given_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="n">prob_if_spam</span><span class="p">,</span> <span class="n">prob_if_ham</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">_probabilities</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">prob_if_spam</span><span class="o">/</span><span class="p">(</span><span class="n">prob_if_spam</span> <span class="o">+</span> <span class="n">prob_if_ham</span><span class="p">)</span>
+<span class="n">words</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">tokens</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">p_spam_given_token</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">model</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"Spammiest Words: "</span><span class="p">,</span> <span class="n">words</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">:])</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"Hammiest Words: "</span><span class="p">,</span> <span class="n">words</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
+</code></pre></div></div>
+
+<h4 id="trying-out-the-model-on-a-dataset">Trying out the model on a dataset</h4>
+
+<p>We will run this model on the UCI ML SMS Spam Dataset <a href="https://archive.ics.uci.edu/ml/datasets/SMS+Spam+Collection">which can be found here</a>. For the detailed code, you can visit this <a href="https://github.com/mitesh1612/Machine-Learning-From-Scratch/blob/master/NaiveBayes/NaiveBayes.ipynb">notebook in my GitHub repo</a></p>
+
+<p>The model returns “claim” “prize” as words indicating the message is spam which is a good sign of this performing okay.</p>
+
+<h4 id="possible-improvements">Possible Improvements</h4>
+
+<p>How could we get better performance? One obvious way would be to get more data to train on. There are a number of ways to improve the model as well. Here are some possibilities that you might try:</p>
+
+<ul>
+  <li>Our classifier takes into account every word that appears in the training set, even words that appear only once. Modify the classifier to accept an optional min_count threshold and ignore tokens that don’t appear at least that many times.</li>
+  <li>The tokenizer has no notion of similar words (e.g., cheap and cheapest). Modify the classifier to take an optional stemmer function that converts words to equivalence classes of words.</li>
+  <li>Although our features are all of the form “message contains word wi,” there’s no reason why this has to be the case. In our implementation, we could add extra features like “message contains a number” by creating phony tokens like contains:number and modifying the tokenizer to emit them when appropriate.</li>
+</ul>
+
+<h2 id="the-horrors-of-prior">The horrors of prior</h2>
+
+<p>After all that code, there is one small topic I would like to touch on, which is on estimating priors.</p>
+
+<p>Prior is one of the trickiest terms to determine in the Bayes equation. As explained really nicely in <a href="https://youtu.be/R13BD8qKeTg">this video by Veritasium</a>, Bayes theorem tells us how to update our beliefs in light of new evidence. It cant tell us how to set our prior beliefs. So it is possible for someone to have a different prior belief than other, because they are subjective. Some people might be more certain about a prior belief that other people. That’s how bias can creep in. And we definitely need a world, and a model, with lesser bias.</p>
+
+<p>Mathematically, instead of “choosing” a prior, we assume the prior probability to follow a prior model and we try to estimate these model parameters (for example assuming the prior distribution follows Gaussian distribution and finding its parameters)</p>
+
+<h2 id="for-further-exploration">For further exploration</h2>
+
+<p>You can visit <a href="https://aihubprojects.com/naive-bayes-algorithm-from-scratch/">this blog</a> for another “from scratch” implementation of Naive Bayes or <a href="https://chrisalbon.com/machine_learning/naive_bayes/naive_bayes_classifier_from_scratch/">this blog</a> as well .</p>
+
+<p>The idea and much of the code was from the book <a href="https://www.amazon.in/Data-Science-Scratch-Joel-Grus/dp/149190142X">“Data Science from Scratch”</a> which is truly an amazing read for someone who wants to implement stuff from scratch.</p>
+
+<p>If you stuck with me till this long, it seems you enjoyed this post. I hope to keep updating this new <strong>Machine Learning, with the Maths</strong> series so keep an eye on this blog. You can always @ me at my socials or the GitHub repo for this blog. Thanks for reading. 😊</p>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="mitesh1612/blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/blog/2020/08/30/naive-bayes" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Mitesh Shah&#39;s Developer Blog, made using Fastpages</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/mitesh1612" title="mitesh1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/mitesh_1612" title="mitesh_1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
