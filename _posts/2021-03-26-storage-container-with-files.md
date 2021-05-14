@@ -130,10 +130,10 @@ We'll create a deployment script, and provide the identity above for it to use. 
         "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', parameters('containerName'))]" // Should run this script only when container actually gets created
     ],
     "properties": {
-        "forceUpdateTag": "[parameters('utcValue')]", //To force run script on redeployment
+        "forceUpdateTag": "[parameters('utcValue')]", // To force run script on redeployment
         "AzCliVersion": "2.2.0",
         "timeout": "PT30M",
-        "arguments": "[concat(parameters('storageAccountName'), ' ', concat(parameters('containerName')))]",
+        "arguments": "[concat(parameters('storageAccountName'), ' ', parameters('containerName'))]",
         "scriptContent": "wget -O files.zip 'https://some-public-url/files.zip' ; unzip files.zip ; az storage blob upload-batch -d $2 -s datafolder --account-name $1",
         "cleanupPreference": "OnSuccess",
         "retentionInterval": "P1D"
