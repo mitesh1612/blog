@@ -89,7 +89,7 @@ Obviously 1 is a simpler way, you can add a `az` cli or `AzPowerShell` command a
 
 Since ARM deployments dont allow you to make any other calls except *Create Resource* calls, how do you delete a resource in an ARM template deployment? We can use [`Deployment Scripts`](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deployment-script-template) and an az CLI command to delete the extension for script A. We can also use a clever depends on relationship to make sure everything happens when we want it to, as shown in the diagram below. Moreover, you can also share a managed identity between the Virtual Machine and Deployment Script, if your custom script extension also needs an identity.
 
-![]({{ site.baseurl }}/images/2021-05-14-vms-with-multiple-extensions/ProblemDescription.png)
+![]({{ site.baseurl }}/images/2021-05-14-vms-with-multiple-extensions/SolutionOverview.png)
 
 Now all that remains is to write this down in an ARM template. That template might look like as follows.
 
