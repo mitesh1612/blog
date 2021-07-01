@@ -2,7 +2,7 @@
 toc: false
 layout: post
 description: How I made a custom attribute to decorate my usual tests with extra behavior for tests written using the MS Test Framework.
-categories: [C#, Testing]
+categories: [C#, testing, design]
 title: How to create a custom C# Attribute to Inject Extra Behavior in Tests
 comments: true
 ---
@@ -74,7 +74,7 @@ public void SomeRandomTest()
 }
 ```
 
-So now we are basically wrapping the execution of test with a higher order function (eerily similar to how Python decorators are written). So for a developer, now they have to write their code. Then create a runner function invoking the test using the higher order function we wrote. I still feel this is a reasonable trade-off and definitely better than the original way, but I wanted to look further for solutions.
+So now we are basically wrapping the execution of test with a higher order function (eerily similar to how Python decorators are written). So for a developer, now they have to write their test code. Then create a runner function invoking the test using the higher order function we wrote. I still feel this is a reasonable trade-off and definitely better than the original way, but I wanted to look further for solutions.
 
 So I started reading on how to achieve a lot of things using C# Attributes. I read up about [Aspect Oriented Programming](https://en.wikipedia.org/wiki/Aspect-oriented_programming) and how [**PostSharp**](https://www.postsharp.net/) can be used to achieve exactly what I wanted using C# attributes. But as I said, I wanted to avoid using any extra library, and thus ignored this suggestion.
 
@@ -132,6 +132,10 @@ public void SomeRandomTest() { } // testing code.
 
 This is exactly what I wanted.
 
+I really prefer this approach, obviously because it exactly matches the spec we wanted for our testing framework, looks cleaner, and can be used to do other things as well (like logging stuff etc). This seems like the tip of the iceberg, and I feel more exploration with the existing attributes that MSTest Framework provides, we can definitely supercharge our testing game.
+
+There are obvious limitations to this as well. For example, some of our helpers were not static methods. They are instance methods of the base class from which all test classes inherit, and I dont prefer sending the whole instance of the test class to my attribute class.
+
 ## Closing Thoughts
 
-I know this is again a specific problem, for people using MS Test Framework, but I think similar things could be achieved with NUnit or other testing frameworks as well. If you have thoughts or suggestions on how this problem could have been solved in a better way, feel free to sound off in the comments. Hope this article was fun for you, catch you in the next one. 😀
+I know this is again a specific problem, for people using MS Test Framework, but I think similar things could be achieved with NUnit or other testing frameworks as well. If you have thoughts or suggestions on how this problem could have been solved in a better way, feel free to sound off in the comments. If you have any other feedback, like this article seeming like an overly long introduction to the `TestMethodAttribute`, feel free to share that as well in the comments as well.  Hope this article was fun for you, catch you in the next one. 😀
