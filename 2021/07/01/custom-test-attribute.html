@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>How to create a custom C# Attribute to Inject Extra Behavior in Tests | Mitesh Shah’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="How to create a custom C# Attribute to Inject Extra Behavior in Tests" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="How I made a custom attribute to decorate my usual tests with extra behavior for tests written using the MS Test Framework." />
+<meta property="og:description" content="How I made a custom attribute to decorate my usual tests with extra behavior for tests written using the MS Test Framework." />
+<link rel="canonical" href="https://mitesh1612.github.io/blog/2021/07/01/custom-test-attribute" />
+<meta property="og:url" content="https://mitesh1612.github.io/blog/2021/07/01/custom-test-attribute" />
+<meta property="og:site_name" content="Mitesh Shah’s Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-07-01T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://mitesh1612.github.io/blog/2021/07/01/custom-test-attribute","@type":"BlogPosting","headline":"How to create a custom C# Attribute to Inject Extra Behavior in Tests","dateModified":"2021-07-01T00:00:00-05:00","datePublished":"2021-07-01T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mitesh1612.github.io/blog/2021/07/01/custom-test-attribute"},"description":"How I made a custom attribute to decorate my usual tests with extra behavior for tests written using the MS Test Framework.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://mitesh1612.github.io/blog/feed.xml" title="Mitesh Shah's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Mitesh Shah&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">How to create a custom C# Attribute to Inject Extra Behavior in Tests</h1><p class="page-description">How I made a custom attribute to decorate my usual tests with extra behavior for tests written using the MS Test Framework.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-07-01T00:00:00-05:00" itemprop="datePublished">
+        Jul 1, 2021
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      6 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#C#">C#</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#Testing">Testing</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>So the title definitely sounds way more complicated than it has any right to, so I’d rather suggest you to read through this post to completely understand the problem and the solution I went with. As I always says, the solution seems trivial, and you might already know something on the lines of it, but it took me a good amount of researching and experimenting to get it to work, so I thought I should share it.</p>
+
+<p>Also do note, that this doesn’t solve the general problem of injecting extra behavior using C# attributes or use C# attributes as decorators like in Python, that I still feel requires a lot more effort. This just solves the problem for writing tests. Apologies if you stumbled here and this doesn’t solve your problem. 😀</p>
+
+<h2 id="the-problem-statement">The Problem Statement</h2>
+
+<p>So we (as in me and my team) created a custom feature flag service for ourselves (keep an eye out for a future posts regarding my findings about the whole ordeal). Now we wanted to enhance our existing test framework to make our existing tests work with feature flags. We wanted options to run our test where the developer can declare/specify the expected state of the feature flag before the test, and it will be set as such, and wanted the experience to author new tests and modify existing tests as seamless as possible.</p>
+
+<p>So to start with we created some helper methods, and instructed everyone to “wrap” their test code between the required helper methods like so:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="n">TestMethod</span><span class="p">]</span>
+<span class="k">public</span> <span class="k">void</span> <span class="nf">SomeRandomTest</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">FeatureFlagHelpers</span><span class="p">.</span><span class="nf">SetFeatureFlag</span><span class="p">(</span><span class="n">featureName</span><span class="p">,</span> <span class="n">featureState</span><span class="p">);</span>
+    <span class="c1">// Actual test code</span>
+    <span class="n">FeatureFlagHepers</span><span class="p">.</span><span class="nf">UnsetFeatureFlag</span><span class="p">(</span><span class="n">featureName</span><span class="p">,</span> <span class="n">featureState</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>While this did serve the purpose we wanted, this process is cumbersome for devs to author tests with the feature flag service. Moreover I feel this is error prone. What if the dev forgot to unset the feature flag in the excitement of writing those bunch of assertions? It can interfere with other tests as well.</p>
+
+<p>We wanted something simpler, and similar to something like Python decorators, where in we can just use an attribute to decorate the test with desired configuration for the feature flag, and that should be it. Something like:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="nf">FeatureFlag</span><span class="p">(</span><span class="s">"featureA"</span><span class="p">,</span> <span class="k">true</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">TestMethod</span><span class="p">]</span>
+<span class="k">public</span> <span class="k">void</span> <span class="nf">SomeRandomTest</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// Actual test code</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="our-limitations">Our Limitations</h2>
+
+<p>So our testing framework is simple, and we use <a href="https://docs.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-mstest"><strong>MSTest</strong></a> as our testing framework. We wanted to avoid any complex libraries or making the test framework more complex (like adding super reflection heavy code?).</p>
+
+<p>I also wanted to use C# Attributes, because usually test authors are already in the habit of using attributes to annotate the test methods.</p>
+
+<p>I read up on C# Attributes and I realised, they are quite different from their Python counterparts. While Python decorators can be used to add extra behavior to existing methods, C# attributes just add metadata and are basically useless for that purpose. (One post laughingly also called them as  <em>glorified comments</em>).</p>
+
+<h2 id="the-journey-to-the-solution">The Journey to the Solution</h2>
+
+<p>So from my earlier specification, this seemed like the perfect fit for the <a href="https://channel9.msdn.com/Shows/Visual-Studio-Toolbox/Design-Patterns-Decorator">decorator design pattern</a>. It is essentially used to add extra behavior to existing classes/code.</p>
+
+<p>I quickly threw up a simple higher order function type solution for my problem like this:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">RunFeatureFlagTest</span><span class="p">(</span><span class="n">Action</span> <span class="n">testToRun</span><span class="p">,</span> <span class="kt">string</span> <span class="n">featureName</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">featureState</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">FeatureFlagHelper</span><span class="p">.</span><span class="nf">SetFeatureFlag</span><span class="p">(</span><span class="n">featureName</span><span class="p">,</span> <span class="n">featureState</span><span class="p">);</span>
+    <span class="nf">testToRun</span><span class="p">();</span>
+    <span class="n">FeatureFlagHelper</span><span class="p">.</span><span class="nf">UnsetFeatureFlag</span><span class="p">(</span><span class="n">featureName</span><span class="p">,</span> <span class="n">featureState</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="p">[</span><span class="n">TestMethod</span><span class="p">]</span>
+<span class="k">public</span> <span class="k">void</span> <span class="nf">SomeRandomTestRunner</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nf">RunFeatureFlagTest</span><span class="p">(</span><span class="n">SomeRandomTest</span><span class="p">,</span> <span class="s">"featureA"</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">void</span> <span class="nf">SomeRandomTest</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// testing code</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>So now we are basically wrapping the execution of test with a higher order function (eerily similar to how Python decorators are written). So for a developer, now they have to write their code. Then create a runner function invoking the test using the higher order function we wrote. I still feel this is a reasonable trade-off and definitely better than the original way, but I wanted to look further for solutions.</p>
+
+<p>So I started reading on how to achieve a lot of things using C# Attributes. I read up about <a href="https://en.wikipedia.org/wiki/Aspect-oriented_programming">Aspect Oriented Programming</a> and how <a href="https://www.postsharp.net/"><strong>PostSharp</strong></a> can be used to achieve exactly what I wanted using C# attributes. But as I said, I wanted to avoid using any extra library, and thus ignored this suggestion.</p>
+
+<p>It felt like we can solve this problem using reflection, or hey, even the new <a href="https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/">source generators</a> feature of .NET seems like a great way to do it, like <a href="https://medium.com/rocket-mortgage-technology-blog/generating-code-in-c-1868ebbe52c5">this</a> and <a href="https://www.infoq.com/articles/CSharp-Source-Generator/">this</a> articles were doing for themselves. But I am not good at reflection, yet 😉 and source generators are a preview feature at the time of writing. (Although they also seemed quite complex to me).</p>
+
+<p>Then I went to basics, looked into how the MS Test Framework uses the <code class="language-plaintext highlighter-rouge">[TestMethod]</code> attribute.</p>
+
+<h2 id="hacking-with-the-testmethod-attribute">Hacking with the TestMethod Attribute</h2>
+
+<p>So I realised that the second attribute <code class="language-plaintext highlighter-rouge">[DataTestMethod]</code> basically inherits the <code class="language-plaintext highlighter-rouge">[TestMethod]</code> attribute. This got me thinking, what if I also inherit from the <code class="language-plaintext highlighter-rouge">[TestMethod]</code> attribute and create my own custom attribute. Hopefully MS Test recognizes methods decorated with that attribute as test methods as well and runs them using VS Test Explorer or <code class="language-plaintext highlighter-rouge">dotnet test</code> command. Boy I was right!</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">TestMethodAttribute</code> class looks something like this:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="n">TestMethodAttribute</span> <span class="p">:</span> <span class="n">Attribute</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nf">TestMethodAttribute</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">TestResult</span><span class="p">[]</span> <span class="k">virtual</span> <span class="nf">Execute</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span> <span class="c1">// This executes the test and returns test results of type TestResult</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Interestingly, the <code class="language-plaintext highlighter-rouge">virtual</code> keyword preceeding the <code class="language-plaintext highlighter-rouge">Execute()</code> method downright indicated that this method was made to be overriden and do interesting things with (I know I know, C# basic feature, but boy was I happy for it being helpful in this real life situation).</p>
+
+<p>Awesome, so I need to inherit this attribute, inject whatever behavior I wanted before calling the base’s <code class="language-plaintext highlighter-rouge">Execute</code> method and ideally my problem is solved. This is exactly the solution. So my final test attribute looked like this.</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="n">FeatureFlagTestAttribute</span> <span class="p">:</span> <span class="n">TestMethodAttribute</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="kt">string</span> <span class="n">featureFlagName</span><span class="p">;</span>
+    <span class="k">private</span> <span class="kt">bool</span> <span class="n">featureFlagState</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">FeatureFlagTestAttribute</span><span class="p">(</span><span class="kt">string</span> <span class="n">ffName</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">ffState</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">featureFlagName</span> <span class="p">=</span> <span class="n">ffName</span><span class="p">;</span>
+        <span class="n">featureFlagState</span> <span class="p">=</span> <span class="n">ffState</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">override</span> <span class="n">TestResult</span><span class="p">[]</span> <span class="nf">Execute</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">FeatureFlagHelper</span><span class="p">.</span><span class="nf">SetFeatureFlag</span><span class="p">(</span><span class="n">featureFlagName</span><span class="p">,</span> <span class="n">featureFlagState</span><span class="p">);</span>
+        <span class="kt">var</span> <span class="n">results</span> <span class="p">=</span> <span class="k">base</span><span class="p">.</span><span class="nf">Execute</span><span class="p">();</span>
+        <span class="n">FeatureFlagHelper</span><span class="p">.</span><span class="nf">UnsetFeatureFlag</span><span class="p">(</span><span class="n">featureFlagName</span><span class="p">,</span> <span class="n">featureFlagState</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">results</span><span class="p">;</span>
+    <span class="p">}</span> 
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>And now the tests can easily be authored as follows:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="nf">FeatureFlagTest</span><span class="p">(</span><span class="s">"featureA"</span><span class="p">,</span> <span class="k">true</span><span class="p">)]</span>
+<span class="k">public</span> <span class="k">void</span> <span class="nf">SomeRandomTest</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span> <span class="c1">// testing code.</span>
+</code></pre></div></div>
+
+<p>This is exactly what I wanted.</p>
+
+<h2 id="closing-thoughts">Closing Thoughts</h2>
+
+<p>I know this is again a specific problem, for people using MS Test Framework, but I think similar things could be achieved with NUnit or other testing frameworks as well. If you have thoughts or suggestions on how this problem could have been solved in a better way, feel free to sound off in the comments. Hope this article was fun for you, catch you in the next one. 😀</p>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="mitesh1612/blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/blog/2021/07/01/custom-test-attribute" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Mitesh Shah&#39;s Developer Blog, made using Fastpages</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/mitesh1612" title="mitesh1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/mitesh_1612" title="mitesh_1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
