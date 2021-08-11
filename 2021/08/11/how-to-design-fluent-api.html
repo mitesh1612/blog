@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>How to Create a Fluent API in C# | Mitesh Shah’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="How to Create a Fluent API in C#" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A introductory post talking about fluent apis, its pros and cons and how to design one for yourself from scratch." />
+<meta property="og:description" content="A introductory post talking about fluent apis, its pros and cons and how to design one for yourself from scratch." />
+<link rel="canonical" href="https://mitesh1612.github.io/blog/2021/08/11/how-to-design-fluent-api" />
+<meta property="og:url" content="https://mitesh1612.github.io/blog/2021/08/11/how-to-design-fluent-api" />
+<meta property="og:site_name" content="Mitesh Shah’s Blog" />
+<meta property="og:image" content="https://mitesh1612.github.io/blog/images/2021-08-11-how-to-design-fluent-api/hero.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-08-11T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://mitesh1612.github.io/blog/2021/08/11/how-to-design-fluent-api","@type":"BlogPosting","headline":"How to Create a Fluent API in C#","dateModified":"2021-08-11T00:00:00-05:00","datePublished":"2021-08-11T00:00:00-05:00","image":"https://mitesh1612.github.io/blog/images/2021-08-11-how-to-design-fluent-api/hero.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://mitesh1612.github.io/blog/2021/08/11/how-to-design-fluent-api"},"description":"A introductory post talking about fluent apis, its pros and cons and how to design one for yourself from scratch.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://mitesh1612.github.io/blog/feed.xml" title="Mitesh Shah's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Mitesh Shah&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">How to Create a Fluent API in C#</h1><p class="page-description">A introductory post talking about fluent apis, its pros and cons and how to design one for yourself from scratch.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-08-11T00:00:00-05:00" itemprop="datePublished">
+        Aug 11, 2021
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      15 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#C#">C#</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#design">design</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#fluent">fluent</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>If you are a regular C# developer, you must have seen a “Fluent” API/Class commonly, for example while using LINQ</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">recentBigCustomers</span> <span class="p">=</span> <span class="n">OrdersList</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">o</span><span class="p">.</span><span class="n">Amount</span> <span class="p">&gt;</span> <span class="m">1000</span> <span class="p">&amp;&amp;</span> <span class="n">o</span><span class="p">.</span><span class="n">Date</span> <span class="p">&gt;=</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span><span class="p">.</span><span class="nf">AddDays</span><span class="p">(-</span><span class="m">5</span><span class="p">))</span>
+                                <span class="p">.</span><span class="nf">OrderBy</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">o</span><span class="p">.</span><span class="n">Amount</span><span class="p">)</span>
+                                <span class="p">.</span><span class="nf">Take</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>
+                                <span class="p">.</span><span class="nf">Select</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">o</span><span class="p">.</span><span class="n">Customer</span><span class="p">)</span>
+                                <span class="p">.</span><span class="nf">ToList</span><span class="p">();</span>
+</code></pre></div></div>
+<p>This post will introduce these Fluent APIs, share some common benefits and pitfalls of using such an API and a short tutorial on how to design such a class yourself.</p>
+
+<h2 id="what-are-fluent-apis">What are Fluent APIs?</h2>
+
+<p>So we use <code class="language-plaintext highlighter-rouge">MSTest</code> for our testing framework and our assertions for tests look something like this:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="n">TestMethod</span><span class="p">]</span>
+<span class="k">public</span> <span class="k">void</span> <span class="nf">ValueOfProperty_ShouldBeEqualTo_Five</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">var</span> <span class="n">propertyValue</span> <span class="p">=</span> <span class="m">5</span><span class="p">;</span>
+    <span class="n">Assert</span><span class="p">.</span><span class="nf">AreEqual</span><span class="p">(</span><span class="n">propertyValue</span><span class="p">,</span> <span class="m">5</span><span class="p">);</span>
+    <span class="c1">// or can be Assert.IsTrue(propertyValue == 5)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>and I was used to seeing all the tests employ similar assertions. But then one fine day, I saw a completed PR that added new tests and their aseertions looked much cleaner, something like this:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="n">TestMethod</span><span class="p">]</span>
+<span class="k">public</span> <span class="k">void</span> <span class="nf">ThisTest_ShouldThrow_ArgumentException</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">Action</span> <span class="n">a</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="k">throw</span> <span class="k">new</span> <span class="nf">ArgumentException</span><span class="p">(</span><span class="s">"MyMessage"</span><span class="p">);</span>
+    <span class="n">a</span><span class="p">.</span><span class="nf">Should</span><span class="p">()</span>
+     <span class="p">.</span><span class="n">Throw</span><span class="p">&lt;</span><span class="n">ArgumentException</span><span class="p">&gt;()</span>
+     <span class="p">.</span><span class="n">And</span>
+     <span class="p">.</span><span class="n">Message</span>
+     <span class="p">.</span><span class="nf">Should</span><span class="p">()</span>
+     <span class="p">.</span><span class="nf">Contain</span><span class="p">(</span><span class="s">"MyMessage"</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>They were using this library called <a href="https://fluentassertions.com/">Fluent Assertions</a> to write their assertions, and although it doesn’t fundamentally change the test or performance, the code looks readable. There is a similar library to write validations as well, aptly named <a href="https://fluentvalidation.net/">Fluent Validation</a>.</p>
+
+<p>(<strong>Side Note</strong>: I know these look a lot like the assertions used in Jest test runs as well).</p>
+
+<p>The name of the library caught my eye, ‘Fluent’ Assertions. So I looked into that library. I was intrigued by the class design for this library and then I recalled, hey this API looks a lot like how LINQ methods are used in C# as well.</p>
+
+<p>So I started reading up on what ‘Fluent’ APIs are. I think Martin Fowler’s <a href="https://martinfowler.com/bliki/FluentInterface.html">blog post</a> on them is a good introduction, but I am going to take a stab at it as well (although do read that post once you’re done here).</p>
+
+<p>Sometime or other you must’ve written code like this:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">string</span> <span class="k">value</span> <span class="p">=</span> <span class="n">input</span><span class="p">.</span><span class="nf">ToString</span><span class="p">();</span>
+<span class="k">value</span> <span class="p">=</span> <span class="k">value</span><span class="p">.</span><span class="nf">ToLower</span><span class="p">();</span>
+<span class="k">value</span> <span class="p">=</span> <span class="k">value</span><span class="p">.</span><span class="nf">Trim</span><span class="p">();</span>
+<span class="k">value</span> <span class="p">=</span> <span class="k">value</span><span class="p">.</span><span class="nf">Substring</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">5</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>or the more weirder version where you create multiple temporary values. Since all the string methods return a string, we can write this in a more concise way like this:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">string</span> <span class="k">value</span> <span class="p">=</span> <span class="n">input</span><span class="p">.</span><span class="nf">ToString</span><span class="p">().</span><span class="nf">ToLower</span><span class="p">().</span><span class="nf">Trim</span><span class="p">().</span><span class="nf">Substring</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">5</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Again, they both do the same thing, but this is more concise and readable according to me.</p>
+
+<p>The other benefit I see of using a Fluent API is great code-completion or “Intellisense” where the IDE itself can suggest what you should write next and you don’t need to read through a bunch of API docs to understand what methods a class providers to you.</p>
+
+<p>The intention of designing a ‘fluent’ API is to produce an API that is readable and flows. We can do similar things in with a non-fluent API as well, and granted do it as well, but like in the LINQ example, it would need a lot more lines of code and a bunch of temporary variables.</p>
+
+<p>To be honest, my fascination with them was mostly because it looked cool and interesting to me, and to convert an existing class or code I’ve written to a ‘fluent’ styled API seemed interesting to me. So I’ll skip writing about the practical benefits and pitfalls of creating such an API until after the tutorial.</p>
+
+<p>So learn on how to write a Fluent API, I thought, what better way than to create one yourself.</p>
+
+<p>So I’ll walk through a (mostly) toy problem, and show you two ways to create a Fluent API, a simple way and a more better way to create a Fluent API.</p>
+
+<h2 id="the-toy-problem">The (toy) Problem</h2>
+
+<p>So we usually write a Dockerfile by hand. If you don’t know what Docker or Dockerfile is (which the toy problem relies a bit on), I’d recommend quickly going through this <a href="https://www.youtube.com/watch?v=Gjnup-PuquQ">amazing video by Fireship</a> that explains it in 100 seconds. Done? Lets move forward then.</p>
+
+<p>So we write a dockerfile by hand, but I wanted to represent a Dockerfile using a C# object, then set the various components for it, like the base image, or the commands I want to run using property setters on that object and finally get the actual text Dockerfile content using a <code class="language-plaintext highlighter-rouge">GenerateDockerfile()</code> method. If it sounds complicated, its really not (seeing the class in action soon might help in clarifying it a bit more).</p>
+
+<p>Instead of creating a normal class, I thought of writing it as a “Fluent” class.</p>
+
+<p>Now lets solve the problem.</p>
+
+<p>If you want to see the final result, you can <a href="https://github.com/mitesh1612/FluentDockerfileGenerator">check this repo</a> containing all the code that we are going to write.</p>
+
+<h2 id="the-simple-way-to-create-a-fluent-api">The Simple Way to Create a Fluent API</h2>
+
+<p>If you look at the Fluent API from the surface, you see that all the methods that are chained together are essentially setters, and these setters return a value, usually the same object back, so more methods can be chained on top of them. This is exactly the simple way to write a fluent API.</p>
+
+<p>Take for example that we want to write a <code class="language-plaintext highlighter-rouge">SimpleFluentDockerfileGenerator</code> which works like this:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">dockerFile</span> <span class="p">=</span> <span class="n">SimpleFluentDockerFileGenerator</span><span class="p">.</span><span class="nf">CreateBuilder</span><span class="p">()</span>
+                <span class="p">.</span><span class="nf">FromImage</span><span class="p">(</span><span class="s">"node:12"</span><span class="p">)</span>
+                <span class="p">.</span><span class="nf">CopyFiles</span><span class="p">(</span><span class="s">"package*.json"</span><span class="p">,</span> <span class="s">"./"</span><span class="p">)</span>
+                <span class="p">.</span><span class="nf">RunCommand</span><span class="p">(</span><span class="s">"npm install"</span><span class="p">)</span>
+                <span class="p">.</span><span class="nf">WithEnvironmentVariable</span><span class="p">(</span><span class="s">"PORT"</span><span class="p">,</span><span class="s">"8080"</span><span class="p">)</span>
+                <span class="p">.</span><span class="nf">ExposePort</span><span class="p">(</span><span class="m">8080</span><span class="p">)</span>
+                <span class="p">.</span><span class="nf">WithRunCommand</span><span class="p">(</span><span class="s">"npm start"</span><span class="p">)</span>
+                <span class="p">.</span><span class="nf">GenerateDockerFile</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>Here each method would be returning the same object and at last the <code class="language-plaintext highlighter-rouge">GenerateDockerFile()</code> would return the text content of the docker file.</p>
+
+<p>If you see, there are two important methods. One is the entry method like <code class="language-plaintext highlighter-rouge">CreateBuilder()</code> above or <code class="language-plaintext highlighter-rouge">Initialize()</code>. Although not really required (like in LINQ), these are important in setting up the skeleton of the underlying object. The second one is the exit method like <code class="language-plaintext highlighter-rouge">ToList()</code> in LINQ or <code class="language-plaintext highlighter-rouge">GenerateDockerFile()</code> here which gives the actual result. All the other outputs are partial outputs.</p>
+
+<p>The other important aspect of this fluent class comes from the entry method. The constructor for this class should be <code class="language-plaintext highlighter-rouge">private</code>. Why private? Because otherwise a user can just do</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">_</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">SimpleFluentDockerFileGenerator</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>and we dont want that. So instead we make the constructor private and create a static factory method on the class.</p>
+
+<p>Taking these two principles, we can build a simple version of the Fluent class. Here is a snippet of my Fluent Class:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">SimpleFluentDockerFileGenerator</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="n">StringBuilder</span> <span class="n">_dockerFileContent</span><span class="p">;</span>
+
+    <span class="k">private</span> <span class="nf">SimpleFluentDockerFileGenerator</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">_dockerFileContent</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">StringBuilder</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">static</span> <span class="n">SimpleFluentDockerFileGenerator</span> <span class="nf">CreateBuilder</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">SimpleFluentDockerFileGenerator</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">SimpleFluentDockerFileGenerator</span> <span class="nf">FromImage</span><span class="p">(</span><span class="kt">string</span> <span class="n">imageName</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">_dockerFileContent</span><span class="p">.</span><span class="nf">AppendLine</span><span class="p">(</span><span class="s">$"FROM </span><span class="p">{</span><span class="n">imageName</span><span class="p">}</span><span class="s">"</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Here I am using <code class="language-plaintext highlighter-rouge">StringBuilder</code> to store the actual string content of the dockerfile and the setters are essentially just adding content to this string builder. (there might be other ways to do it like having a bunch of private properties, but this is the way I chose). As you can see, my constructor is private which initializes a new object and I have a factory method that returns a new object.</p>
+
+<p>You can also see the setter method <code class="language-plaintext highlighter-rouge">FromImage</code> that adds content to the object and returns it back, which will enable us to use “method-chaining” on our objects.</p>
+
+<p>And really, that’s it. You can keep adding such methods to add more content and complete the fluent class. Here is a <a href="https://github.com/mitesh1612/FluentDockerfileGenerator/blob/main/SimpleFluentDockerFileGenerator.cs">link to my implementation</a> of the same class.</p>
+
+<h3 id="the-problem-with-this-approach">The Problem with this Approach</h3>
+
+<p>You might be thinking, hey if creating a Fluent API is this simple, why can I see a lot of content remaining in this post?</p>
+
+<p>While this approach is simple for bootstrapping, can you find an issue by designing your fluent classes in this way? (Just issues in the fluent design only 😅)</p>
+
+<p>The major issue is that, there is no guidance on the order of methods a user should use. When the user loads up the object in their IDE and sees all the method suggestion, they don’t really get a hint of which methods are required to be called or what order they should be called in. So a user can do something like:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">dockerFile</span> <span class="p">=</span> <span class="n">SimpleFluentDockerFileGenerator</span><span class="p">.</span><span class="nf">CreateBuilder</span><span class="p">()</span>
+                <span class="p">.</span><span class="nf">CopyFiles</span><span class="p">(</span><span class="s">"package*.json"</span><span class="p">,</span> <span class="s">"./"</span><span class="p">)</span>
+                <span class="p">.</span><span class="nf">RunCommand</span><span class="p">(</span><span class="s">"npm install"</span><span class="p">)</span>
+                <span class="p">.</span><span class="nf">ExposePort</span><span class="p">(</span><span class="m">8080</span><span class="p">)</span>
+                <span class="p">.</span><span class="nf">WithRunCommand</span><span class="p">(</span><span class="s">"npm start"</span><span class="p">)</span>
+                <span class="p">.</span><span class="nf">GenerateDockerFile</span><span class="p">();</span> <span class="c1">// Where's the base image!!</span>
+</code></pre></div></div>
+
+<p>and get a dockerfile without a base image and no error would be thrown. I know we can maybe add validations to ensure its called and stuff like that, but it still doesn’t solve our other problems like guiding the user about the order of the methods used or bombarding with all the available methods instead of a few available ones.</p>
+
+<p>For example in LINQ, whenever you call the <code class="language-plaintext highlighter-rouge">OrderBy()</code> method, that method gives you <strong>new</strong> methods that you are able to call like <code class="language-plaintext highlighter-rouge">.ThenBy()</code> or <code class="language-plaintext highlighter-rouge">.ThenByDescending()</code>. It doesn’t make sense to perform <code class="language-plaintext highlighter-rouge">.ThenBy()</code> on its own.</p>
+
+<p>I think the approach we are going to see now is powerful in these aspects. They in a way guide a user on what methods are available, what their natural order should be, and how the user can avoid shooting themselves on the foot by missing calling some important methods.</p>
+
+<h2 id="the-better-way-to-create-a-fluent-api">The Better Way to Create a Fluent API</h2>
+
+<p>If you guessed it, great. If not, hey that’s why I am writing the post right. We are going to use <strong>Interfaces</strong> to solve all the problems listed above.</p>
+
+<p>Like in the LINQ OrderBy example, when you call <code class="language-plaintext highlighter-rouge">OrderBy()</code> on an <code class="language-plaintext highlighter-rouge">IEnumerable</code> object, instead of returning another <code class="language-plaintext highlighter-rouge">IEnumerable</code>, it returns an object of type <code class="language-plaintext highlighter-rouge">IOrderedEnumerable</code> which adds or remove new methods in your method chain.</p>
+
+<p>We are going to create interfaces to limit the next set of methods an object can call or what methods are allowed to be called at a particular time. Then our class would implement our interfaces and the methods would change their return types from the class to the respective interfaces thus giving us the better, guided flow we want.</p>
+
+<p>There are multiple ways regarding the process about designing a fluent API, for example <a href="https://scottlilly.com/how-to-create-a-fluent-interface-in-c/">this article</a> shows a great process on it, by defining various grammar rules and then using them to create interfaces.</p>
+
+<p>I am going to try something different. Let’s try to see the order of methods that we can call using a state diagram [and no I am not using this way to flex on my excalidraw skills, although a man can do both]. Consider the following state diagram.</p>
+
+<p><img src="/blog/images/2021-08-11-how-to-design-fluent-api/InitialStateDiagram.png" alt="" /></p>
+
+<p>As you can see, after you create the builder, the first method should be <code class="language-plaintext highlighter-rouge">FromImage()</code> to set the base image. After calling it, we can set any of the other properties like copying files, setting environment variables, running commands, exposing port with their respective methods, but you shouldn’t be able to get back to set the base image again here. You can cycle through any of the states, i.e. any state should be reachable from any other state. From all of these states, you should be able to reach the penultimate state that can set the container startup command using the <code class="language-plaintext highlighter-rouge">WithCommand()</code> method. Again, once you reach there, you shouldnt be able to go back to any previous state (since there is no point of setting any other properties after adding the container startup command). After this, you should only be able to generate the dockerfile.</p>
+
+<p>Let us define these “stages” (I am referring to stages as a bunch of states) as</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">CanSetBaseImage</code></li>
+  <li><code class="language-plaintext highlighter-rouge">CanSetContainerProperties</code></li>
+  <li><code class="language-plaintext highlighter-rouge">CanAddRunCommand</code></li>
+  <li><code class="language-plaintext highlighter-rouge">CanGenerateDockerfile</code></li>
+</ol>
+
+<p>So we can group our states in our previous state diagram like this:</p>
+
+<p><img src="/blog/images/2021-08-11-how-to-design-fluent-api/StateDiagramWithStagesMarked.png" alt="" /></p>
+
+<p>Now if we define the transition between these stages as follows, we get this:</p>
+
+<p><img src="/blog/images/2021-08-11-how-to-design-fluent-api/StageTransitionDiagram.png" alt="" /></p>
+
+<p>We can now model these stages as interfaces now, and use the transition between these stages to determine the return type of each methods.</p>
+
+<p>So for example, I can create an interface <code class="language-plaintext highlighter-rouge">ICanSetBaseImage</code> which will be returned by the <code class="language-plaintext highlighter-rouge">Create()</code> class. This will only contain the method to set the base image (the <code class="language-plaintext highlighter-rouge">FromImage()</code> method). The return type of this method would be the next interface in the stage transition diagram, <code class="language-plaintext highlighter-rouge">ICanSetContainerProperties</code>:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">interface</span> <span class="nc">ICanSetBaseImage</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="n">ICanSetContainerProperties</span> <span class="nf">FromImage</span><span class="p">(</span><span class="kt">string</span> <span class="n">image</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>If we look at the end of the stage diagram, we can create an interface called <code class="language-plaintext highlighter-rouge">ICanAddRunCommand</code> that will only let the user add the container startup command and that method returns an object of the interface called <code class="language-plaintext highlighter-rouge">ICanGenerateDockerfile</code> which only lets you generate the dockerfile now.</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">interface</span> <span class="nc">ICanAddRunCommand</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="n">ICanGenerateDockerFile</span> <span class="nf">WithCommand</span><span class="p">(</span><span class="kt">string</span> <span class="n">command</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">interface</span> <span class="nc">ICanGenerateDockerFile</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="nf">GenerateDockerFile</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now for the <code class="language-plaintext highlighter-rouge">ICanSetContainerPropertiesInterface</code>. For all the methods in this interface, they can call their methods again (signified using the loop in the transition diagram) or use the <code class="language-plaintext highlighter-rouge">WithCommand</code> method to break out of it. We can model this using inheritance between the interfaces.</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">interface</span> <span class="nc">ICanSetContainerProperties</span> <span class="p">:</span> <span class="n">ICanAddRunCommand</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="n">ICanSetContainerProperties</span> <span class="nf">CopyFiles</span><span class="p">(</span><span class="kt">string</span> <span class="n">source</span><span class="p">,</span> <span class="kt">string</span> <span class="n">destination</span><span class="p">);</span>
+    <span class="k">public</span> <span class="n">ICanSetContainerProperties</span> <span class="nf">RunCommand</span><span class="p">(</span><span class="kt">string</span> <span class="n">command</span><span class="p">);</span>
+    <span class="k">public</span> <span class="n">ICanSetContainerProperties</span> <span class="nf">ExposePort</span><span class="p">(</span><span class="kt">int</span> <span class="n">port</span><span class="p">);</span>
+    <span class="k">public</span> <span class="n">ICanSetContainerProperties</span> <span class="nf">WithEnvironmentVariable</span><span class="p">(</span><span class="kt">string</span> <span class="n">variableName</span><span class="p">,</span> <span class="kt">string</span> <span class="n">variableValue</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">interface</span> <span class="nc">ICanAddRunCommand</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="n">ICanGenerateDockerFile</span> <span class="nf">WithCommand</span><span class="p">(</span><span class="kt">string</span> <span class="n">command</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This would let the object either call the same methods again or use the <code class="language-plaintext highlighter-rouge">WithCommand</code> method to short circuit and get out of the loop.</p>
+
+<p>Once this is done, we can make our class implement all these interfaces as follows:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">FluentDockerfileGenerator</span> <span class="p">:</span>
+        <span class="n">ICanSetBaseImage</span><span class="p">,</span>
+        <span class="n">ICanGenerateDockerFile</span><span class="p">,</span>
+        <span class="n">ICanSetContainerProperties</span><span class="p">,</span>
+        <span class="n">ICanAddRunCommand</span>
+    <span class="p">{</span>
+</code></pre></div></div>
+
+<p>and then change the return type of the respective methods to the appropriate interface types like:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">FluentDockerfileGenerator</span> <span class="p">:</span>
+        <span class="n">ICanSetBaseImage</span><span class="p">,</span>
+        <span class="n">ICanGenerateDockerFile</span><span class="p">,</span>
+        <span class="n">ICanSetContainerProperties</span><span class="p">,</span>
+        <span class="n">ICanAddRunCommand</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="n">StringBuilder</span> <span class="n">_dockerFileContent</span><span class="p">;</span>
+
+    <span class="k">private</span> <span class="nf">FluentDockerfileGenerator</span><span class="p">()</span> <span class="c1">// The private constructor</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">_dockerFileContent</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">StringBuilder</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">static</span> <span class="n">ICanSetBaseImage</span> <span class="nf">CreateBuilder</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">FluentDockerfileGenerator</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">ICanSetContainerProperties</span> <span class="nf">FromImage</span><span class="p">(</span><span class="kt">string</span> <span class="n">imageName</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">_dockerFileContent</span><span class="p">.</span><span class="nf">AppendLine</span><span class="p">(</span><span class="s">$"FROM </span><span class="p">{</span><span class="n">imageName</span><span class="p">}</span><span class="s">"</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>You can refer to <a href="https://github.com/mitesh1612/FluentDockerfileGenerator/blob/main/FluentDockerfileGenerator.cs">this link to the repo</a> containing the full code for this class.</p>
+
+<p>Now if we use the same fluent class, we get in a way guided tour of the natural order of methods and the methods we have at our disposal. Here are a few examples of the awesome code completion we get with this fluent class.</p>
+
+<p><img src="/blog/images/2021-08-11-how-to-design-fluent-api/CodeCompletion.png" alt="" /></p>
+
+<p>Do take a look at the complete code in <a href="https://github.com/mitesh1612/FluentDockerfileGenerator">the repository</a>, and contributions are always welcome. 😀</p>
+
+<h2 id="so-what-did-we-lose">So what did we lose?</h2>
+
+<h3 id="requirement-of-domain-knowledge">Requirement of Domain Knowledge</h3>
+
+<p>The best start to discussing the benefits and pitfalls of creating a fluent API comes for the example itself that we took. As you can see, designing a fluent API is really domain specific like the example was really specific to the domain of generating a dockerfile and this is what Martin Fowler believes as well. This requirement of the domain knowledge forces you to think as a user of your API, how well your API communicates with the users and is critical to the success of it as well. This also trickles down to the users of the API, but only if the API is not well designed I believe. If the user is not well versed in the domain, they would be lost trying to combine enigmatic methods, stitching things together until they work. Although a well defined fluent API can remediate a lot of it.</p>
+
+<h3 id="design-roadblocks">Design Roadblocks</h3>
+
+<p>Usually you are likely to hit design roadblocks while designing a fluent API (as with any API design in general), since this is not a design pattern nor a framework and I’ll try to outline a few common deficiencies if you decide to implement such an API.</p>
+
+<ol>
+  <li><strong>Gratuitous Extension Methods</strong>, where you keep adding new methods to avoid the cost of refactoring</li>
+  <li><strong>Context Confusion</strong>, where sometimes new methods totally unrelated to the original context are added</li>
+  <li><strong>Exception MisManagement</strong>, where you have to write a lot more code to handle and manage exceptions better</li>
+  <li><strong>Viscous Interface</strong>, where due to the above 3, the interface loses its fluency over time.</li>
+</ol>
+
+<p>For more details on this problem, I’d recommend going through <a href="https://www.red-gate.com/simple-talk/development/dotnet-development/fluent-code-in-c/">this article</a></p>
+
+<p>Or this one very wonderful comment I found on this wonderful <a href="https://www.youtube.com/watch?v=1JAdZul-aRQ">YouTube video</a> on how to write a Fluent API.</p>
+
+<p><img src="/blog/images/2021-08-11-how-to-design-fluent-api/YoutubeComment.png" alt="" /></p>
+
+<h2 id="and-what-did-we-gain">And what did we gain?</h2>
+
+<p>I think the biggest benefit of a Fluent Interface, when designed well, <em>only let you use what makes sense to use in the current context</em>. In a properly designed fluent interface, you shouldn’t be able to:</p>
+
+<ul>
+  <li>Call the methods in the wrong order</li>
+  <li>Be confused on where to start</li>
+  <li>Be confused about where to go next</li>
+  <li>Call methods in a specific chain partially</li>
+</ul>
+
+<p>Fluent Interface design gives the developer a techinique for building code that is designed with the intent that other people might actually be reading it. This also creates a new mindset where instead of thinking “what data does this object have”, you are forced to think about “what kinds of things this object can do?”</p>
+
+<p>These benefits may seem superflous or not worth the effort required to build such an interface API and I totally get that.</p>
+
+<p>To me, as I said, it looks cool, and that was a reason enough to me to learn a bit more about them, and I hope this post does the same for you.</p>
+
+<p>That’s it for this one. You can always share your thoughts on this by leaving a comment on this post. If you liked what you read, you can try reading some other posts on my blog as well, and you can also connect with me on my socials.</p>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="mitesh1612/blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/blog/2021/08/11/how-to-design-fluent-api" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Mitesh Shah&#39;s Developer Blog, made using Fastpages</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/mitesh1612" title="mitesh1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/mitesh_1612" title="mitesh_1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
