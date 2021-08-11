@@ -80,9 +80,9 @@ The intention of designing a 'fluent' API is to produce an API that is readable 
 
 To be honest, my fascination with them was mostly because it looked cool and interesting to me, and to convert an existing class or code I've written to a 'fluent' styled API seemed interesting to me. So I'll skip writing about the practical benefits and pitfalls of creating such an API until after the tutorial.
 
-So learn on how to write a Fluent API, I thought, what better way than to create one yourself.
+I thought what better way to learn how to write a Fluent API than to create one yourself. So lets create a simple fluent API from scratch.
 
-So I'll walk through a (mostly) toy problem, and show you two ways to create a Fluent API, a simple way and a more better way to create a Fluent API.
+I'll walk through a (mostly) toy problem, and show you two ways to create a Fluent API, a simple way and a more better way to create a Fluent API.
 
 ## The (toy) Problem
 
