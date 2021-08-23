@@ -1,0 +1,17 @@
+on:
+  push:
+    branches:
+      gh-pages
+
+jobs:
+  check-links:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: gh-pages
+    - uses: actions/setup-python@v2
+    - name: Check for Broken Links
+      run: |
+        pip install fastlinkcheck
+        link_check .
