@@ -12,11 +12,9 @@ Hey there, this is my personal blog setup which is _powered by [fastpages](https
 
 ## See the blog live
 
-<div>
-<a href="https://mitesh1612.github.io/blog" target="_blank">
-<img src="https://raw.githubusercontent.com/narative/gatsby-theme-novela-example/master/assets/gatsby-theme-novela-cta-demo.jpg" alt="gatsby-novela-theme live demo" width="295px" />
-</a>
-</div>
+To check out the live version of the site in all of it's glory, head over to:
+
+### https://mitesh1612.github.io/blog
 
 ## What To Do Next?
 
