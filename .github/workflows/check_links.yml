@@ -1,3 +1,4 @@
+# Use this for more information and setting up .rc file https://fastpages.fast.ai/fastlinkcheck/
 name: Check for Broken Links
 on:
   push:
