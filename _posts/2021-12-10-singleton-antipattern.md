@@ -247,4 +247,6 @@ Singleton pattern is quite useful for ambient services, but their default implem
 - The use/dependency of the singleton is not hidden deeply into the code.
 - Otherwise use the singleton in a code that will not be unit tested.
   
-And I end with a generic statement, this pattern can be good, given its used wisely!
+And I end it with a generic statement, this pattern can be good, given its used wisely!
+
+That's it for this one. You can always share your thoughts on this by leaving a comment on this post. If you liked what you read, you can try reading some other posts on my blog as well, and you can also connect with me on my socials.
