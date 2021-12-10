@@ -118,7 +118,7 @@ This still doesn't solve the other cons listed above and it also makes the imple
 
 ## Singleton or Dependency Injection?
 
-The main complaint for a default Singleton pattern is that is doesn't support dependency injection principle which hinders testability for the code that consumes this singleton service. It acts as a global constant and its really hard to substitute it with a test double.
+The main complaint for the default Singleton pattern is that is doesn't support dependency injection principle which hinders testability for the code that consumes this singleton service. It acts as a global constant and its really hard to substitute it with a test double.
 
 Dependency Injection is preferable when we have a non-stable dependency. It's a good practice, as it provides great testability and lets a class specify everything it needs to function properly.
 
@@ -132,7 +132,7 @@ For such dependencies, its easier to make it ambient and clean up the dependency
 
 So one of the major flexibility for the default Singleton pattern is the lack of flexibility at runtime. Since any code consuming this service depends on the concrete implementation itself, we are unable to replace it with say an `ExtendedSomeService` or `MockSomeService`. To achieve extensiblity at runtime, while also having a global access point, we can use the [Ambient Context Pattern](http://core.loyc.net/essentials/ambient-service-pattern.html). Let's start with seeing the implementation directly.
 
-(Also hey, sound off in the comments if you want to see my take on ambient service/context pattern).
+(Also hey, sound off in the comments if you want to see my take on ambient context pattern).
 
 ```cs
 public interface ISomeService { }
@@ -154,7 +154,7 @@ public class SomeServiceContext
 }
 ```
 
-And then we can initialize or use the like so:
+And then we can initialize or use it like so:
 
 ```cs
 // Initialization in the application code
@@ -168,7 +168,7 @@ Now to access SomeService, we always use the `SomeServiceContext.Current` proper
 
 The most obvious pro of jumping through these hoops is to achieve runtime flexibility. Also since now `SomeService` only does its own work, we are not violating the Single Responsiblity Principle.
 
-Now about the glaring **Con**: This is not the Singleton pattern anymore. As it is visibile clearly, now someone can create many many instances of the singleton service class and they might not be the same as accessed from the context class.
+Now about the glaring **Con**: This is not the Singleton pattern anymore. As it is visibile clearly, now someone can create many many instances of the `SomeService` class, which was supposed to be a singleton and they might not be the same as accessed from the context class.
 
 ### Another variant of this pattern using an initializer/factory method
 
@@ -220,7 +220,7 @@ Since we are using the IoC container (and registration is usually against an int
 
 The con still exists that nothing's stopping you to create multiple instances of `SomeService` in your code.
 
-## Modelling the Singleton a Dependency in the Consuming class
+## Modelling the Singleton as a Dependency in the Consuming class
 
 There is one more shortcut to reduce the control the dependency in the consuming code for the singleton service while mostly using the default pattern. The consuming code can take the singleton as a dependency in the constructor with default value as the default singleton's instance, like so:
 
@@ -246,7 +246,9 @@ Singleton pattern is quite useful for ambient services, but their default implem
 - You use the different implementations discussed above or a combination of those so that the consuming code is more testable and easy to work with.
 - The use/dependency of the singleton is not hidden deeply into the code.
 - Otherwise use the singleton in a code that will not be unit tested.
-  
+
+For further reading on this topic, I would suggest [this post](https://enterprisecraftsmanship.com/posts/singleton-vs-dependency-injection/) which has way more pictures.
+
 And I end it with a generic statement, this pattern can be good, given its used wisely!
 
 That's it for this one. You can always share your thoughts on this by leaving a comment on this post. If you liked what you read, you can try reading some other posts on my blog as well, and you can also connect with me on my socials.
