@@ -224,7 +224,7 @@ window.onload = wrap_img;
 
 <h2 id="singleton-or-dependency-injection">Singleton or Dependency Injection?</h2>
 
-<p>The main complaint for a default Singleton pattern is that is doesn’t support dependency injection principle which hinders testability for the code that consumes this singleton service. It acts as a global constant and its really hard to substitute it with a test double.</p>
+<p>The main complaint for the default Singleton pattern is that is doesn’t support dependency injection principle which hinders testability for the code that consumes this singleton service. It acts as a global constant and its really hard to substitute it with a test double.</p>
 
 <p>Dependency Injection is preferable when we have a non-stable dependency. It’s a good practice, as it provides great testability and lets a class specify everything it needs to function properly.</p>
 
@@ -238,7 +238,7 @@ window.onload = wrap_img;
 
 <p>So one of the major flexibility for the default Singleton pattern is the lack of flexibility at runtime. Since any code consuming this service depends on the concrete implementation itself, we are unable to replace it with say an <code class="language-plaintext highlighter-rouge">ExtendedSomeService</code> or <code class="language-plaintext highlighter-rouge">MockSomeService</code>. To achieve extensiblity at runtime, while also having a global access point, we can use the <a href="http://core.loyc.net/essentials/ambient-service-pattern.html">Ambient Context Pattern</a>. Let’s start with seeing the implementation directly.</p>
 
-<p>(Also hey, sound off in the comments if you want to see my take on ambient service/context pattern).</p>
+<p>(Also hey, sound off in the comments if you want to see my take on ambient context pattern).</p>
 
 <div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">interface</span> <span class="nc">ISomeService</span> <span class="p">{</span> <span class="p">}</span>
 
@@ -259,7 +259,7 @@ window.onload = wrap_img;
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>And then we can initialize or use the like so:</p>
+<p>And then we can initialize or use it like so:</p>
 
 <div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Initialization in the application code</span>
 <span class="n">SomeServiceContext</span><span class="p">.</span><span class="nf">Initialize</span><span class="p">(</span><span class="k">new</span> <span class="nf">SomeService</span><span class="p">());</span>
@@ -272,7 +272,7 @@ window.onload = wrap_img;
 
 <p>The most obvious pro of jumping through these hoops is to achieve runtime flexibility. Also since now <code class="language-plaintext highlighter-rouge">SomeService</code> only does its own work, we are not violating the Single Responsiblity Principle.</p>
 
-<p>Now about the glaring <strong>Con</strong>: This is not the Singleton pattern anymore. As it is visibile clearly, now someone can create many many instances of the singleton service class and they might not be the same as accessed from the context class.</p>
+<p>Now about the glaring <strong>Con</strong>: This is not the Singleton pattern anymore. As it is visibile clearly, now someone can create many many instances of the <code class="language-plaintext highlighter-rouge">SomeService</code> class, which was supposed to be a singleton and they might not be the same as accessed from the context class.</p>
 
 <h3 id="another-variant-of-this-pattern-using-an-initializerfactory-method">Another variant of this pattern using an initializer/factory method</h3>
 
@@ -322,7 +322,7 @@ window.onload = wrap_img;
 
 <p>The con still exists that nothing’s stopping you to create multiple instances of <code class="language-plaintext highlighter-rouge">SomeService</code> in your code.</p>
 
-<h2 id="modelling-the-singleton-a-dependency-in-the-consuming-class">Modelling the Singleton a Dependency in the Consuming class</h2>
+<h2 id="modelling-the-singleton-as-a-dependency-in-the-consuming-class">Modelling the Singleton as a Dependency in the Consuming class</h2>
 
 <p>There is one more shortcut to reduce the control the dependency in the consuming code for the singleton service while mostly using the default pattern. The consuming code can take the singleton as a dependency in the constructor with default value as the default singleton’s instance, like so:</p>
 
@@ -349,6 +349,8 @@ window.onload = wrap_img;
   <li>The use/dependency of the singleton is not hidden deeply into the code.</li>
   <li>Otherwise use the singleton in a code that will not be unit tested.</li>
 </ul>
+
+<p>For further reading on this topic, I would suggest <a href="https://enterprisecraftsmanship.com/posts/singleton-vs-dependency-injection/">this post</a> which has way more pictures.</p>
 
 <p>And I end it with a generic statement, this pattern can be good, given its used wisely!</p>
 
