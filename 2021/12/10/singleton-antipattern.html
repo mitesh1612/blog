@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Improvements and Implementations of the Singleton Pattern | Mitesh Shah’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Improvements and Implementations of the Singleton Pattern" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="How the default singleton pattern becomes an anti-pattern at times and how we can improve on its flaws in different ways to create ambient services in your code." />
+<meta property="og:description" content="How the default singleton pattern becomes an anti-pattern at times and how we can improve on its flaws in different ways to create ambient services in your code." />
+<link rel="canonical" href="https://mitesh1612.github.io/blog/2021/12/10/singleton-antipattern" />
+<meta property="og:url" content="https://mitesh1612.github.io/blog/2021/12/10/singleton-antipattern" />
+<meta property="og:site_name" content="Mitesh Shah’s Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-12-10T00:00:00-06:00" />
+<script type="application/ld+json">
+{"url":"https://mitesh1612.github.io/blog/2021/12/10/singleton-antipattern","@type":"BlogPosting","headline":"Improvements and Implementations of the Singleton Pattern","dateModified":"2021-12-10T00:00:00-06:00","datePublished":"2021-12-10T00:00:00-06:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mitesh1612.github.io/blog/2021/12/10/singleton-antipattern"},"description":"How the default singleton pattern becomes an anti-pattern at times and how we can improve on its flaws in different ways to create ambient services in your code.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://mitesh1612.github.io/blog/feed.xml" title="Mitesh Shah's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Mitesh Shah&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Improvements and Implementations of the Singleton Pattern</h1><p class="page-description">How the default singleton pattern becomes an anti-pattern at times and how we can improve on its flaws in different ways to create ambient services in your code.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-12-10T00:00:00-06:00" itemprop="datePublished">
+        Dec 10, 2021
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      9 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#C#">C#</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#design-patterns">design-patterns</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#design">design</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>Singleton is probably one of the easiest design patterns from the <a href="https://www.amazon.in/Design-Patterns-Object-Oriented-Addison-Wesley-Professional-ebook/dp/B000SEIBB8">Gang of Four book</a>. Its easy to understand and fairly simple to implement. Then Why is it hated? How is it easy to misuse?</p>
+
+<p>Let’s see step by step on what’s wrong with the pattern, how we can fix its flaws and collect some learnings on the way.</p>
+
+<p>For the code examples, I will assume that we will be writing a service called <code class="language-plaintext highlighter-rouge">SomeService</code> as a singleton that can be used anywhere across a .NET app. This service was designed as a singleton and not passed using Dependency Injection to make it available as an ambient service across the code base, deep inside the business logic. The pain points still apply for using Singleton for any other class as well.</p>
+
+<p>Just a heads-up, the code examples will be in C#, but the flaws and improvements work in whatever language you work with. 😀</p>
+
+<h2 id="implementing-singleton-using-a-static-property">Implementing Singleton using a Static Property</h2>
+
+<p>So the base, vanilla implementation of the singleton pattern is quite easy, you make the constructor private (or protected if that’s your jam) and provide a static <code class="language-plaintext highlighter-rouge">instance</code> property which will be used to access the singleton object. Here’s how that is implemented</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">SomeService</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="nf">SomeService</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"Some heavy service initialization"</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">SomeService</span> <span class="n">_instance</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">SomeService</span><span class="p">();</span>
+
+    <span class="k">public</span> <span class="k">static</span> <span class="n">SomeService</span> <span class="n">Instance</span> <span class="p">=&gt;</span> <span class="n">_instance</span><span class="p">;</span>
+
+    <span class="c1">// Other properties of this service</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>And it can be used as</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">someSvc</span> <span class="p">=</span> <span class="n">SomeService</span><span class="p">.</span><span class="n">Instance</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>As I said, simple enough. This is the easiest implementation to work with.</p>
+
+<p>Not, lets discuss a few cons of going with this default way.</p>
+
+<h3 id="cons-of-default-implementation">Cons of Default Implementation</h3>
+
+<ul>
+  <li>Not lazy. The instance will be instantiated when the type is loaded. This means whether the instance is used or not, it will always be loaded, and will cause a performance issue if the service initialization is really heavy. But that has an easy fix, more details below.</li>
+  <li>The singleton object cannot be replaced with the another type of object at runtime in a polymorphic way. Since there is no interface for the SomeService, I can only work with this one implementation of it.</li>
+  <li>The code that uses Singleton is not easily testable. Let’s say I have some code consuming this service. Since the code is relying on a static singleton, it’s actually hard to mock or stub it and that reduces the testability. Also since this is a static, it is generally bad for testing <a href="https://stackoverflow.com/questions/25591309/why-static-methods-are-bad-apart-from-tests">as discussed here</a>.</li>
+  <li>Using a singleton creates implicit dependencies in the rest of the code.</li>
+  <li>It also violates the single responsibility principle because the class has 2 responsibilities, its main work and it is also responsible for creating itself.</li>
+</ul>
+
+<p>Let’s try to fix a few of these cons by making slight changes to the default implementation of the Singleton pattern.</p>
+
+<h3 id="lazy-implementation-using-lazyt-class">Lazy implementation using <code class="language-plaintext highlighter-rouge">Lazy&lt;T&gt;</code> class</h3>
+
+<p>We can fix the first con by using <code class="language-plaintext highlighter-rouge">Lazy&lt;T&gt;</code> class. The singleton object will only be instantiated when the Instance property is actually accessed.</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">SomeService</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="nf">SomeService</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"Some heavy service initialization"</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">Lazy</span><span class="p">&lt;</span><span class="n">SomeService</span><span class="p">&gt;</span> <span class="n">_instance</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Lazy</span><span class="p">&lt;</span><span class="n">SomeService</span><span class="p">&gt;(()</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="nf">Singleton</span><span class="p">());</span>
+
+    <span class="k">public</span> <span class="k">static</span> <span class="n">SomeService</span> <span class="n">Instance</span> <span class="p">=&gt;</span> <span class="n">_instance</span><span class="p">.</span><span class="n">Value</span><span class="p">;</span>
+
+    <span class="c1">// Other properties of this service   </span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This makes the implementation a 100% lazy and still maintains the ease of implementation. But the other cons still hold true here like no extensibility, it is not testable and it still violates the Single Responsibility Principle.</p>
+
+<h3 id="double-checked-locking-based-implementation">Double-Checked Locking based implementation</h3>
+
+<p>Yes, we are still editing the vanilla pattern a bit more. This implementation is almost similar to the previous ones, but from a learning standpoint, it provides a few standouts. It shows how to use <a href="https://en.wikipedia.org/wiki/Double-checked_locking">doubled-checked locking technique</a>, the <a href="https://www.c-sharpcorner.com/UploadFile/1d42da/volatile-keyword-in-C-Sharp-threading/">volatile keyword</a> and <a href="https://www.javatpoint.com/c-sharp-thread-synchronization">lock synchronization</a>. This is a great implementation for a concurrent distributed system, since its completely thread safe.</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">SomeService</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="k">static</span> <span class="k">volatile</span> <span class="n">SomeService</span> <span class="n">_instance</span><span class="p">;</span>
+    <span class="k">private</span> <span class="k">static</span> <span class="k">readonly</span> <span class="kt">object</span> <span class="n">_lock</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">object</span><span class="p">();</span>
+
+    <span class="k">private</span> <span class="nf">SomeService</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"Some heavy service initialization"</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">static</span> <span class="n">SomeService</span> <span class="n">Instance</span>
+    <span class="p">{</span>
+        <span class="k">get</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">_instance</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">lock</span> <span class="p">(</span><span class="n">_lock</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">_instance</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
+                    <span class="p">{</span>
+                        <span class="n">_instance</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">SomeService</span><span class="p">();</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="n">_instance</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Using this locking construct makes this singleton implementation thread safe.</p>
+
+<p>This still doesn’t solve the other cons listed above and it also makes the implementation a bit complicated.</p>
+
+<h2 id="singleton-or-dependency-injection">Singleton or Dependency Injection?</h2>
+
+<p>The main complaint for a default Singleton pattern is that is doesn’t support dependency injection principle which hinders testability for the code that consumes this singleton service. It acts as a global constant and its really hard to substitute it with a test double.</p>
+
+<p>Dependency Injection is preferable when we have a non-stable dependency. It’s a good practice, as it provides great testability and lets a class specify everything it needs to function properly.</p>
+
+<p>But then there are some dependencies that can be better represented using a Singleton. These are <strong>ambient dependencies</strong>. Ambient dependencies are dependencies which span across multiple classes and often multiple layers. They act as cross-cutting concerns for your application.</p>
+
+<p>It doesn’t really make sense to apply the Dependency Injection design pattern for such dependencies as they are going to be everywhere anyway.</p>
+
+<p>For such dependencies, its easier to make it ambient and clean up the dependency graph for consuming code. Without doing this, the code base would be flooded with the excessive number of the same dependencies traversing most of your classes. There might also be cases where you might need to create a tree of passing the dependency to some business logic class from the point where all dependencies are received.</p>
+
+<h2 id="implementing-singleton-using-the-ambient-context-pattern">Implementing Singleton using the Ambient Context Pattern</h2>
+
+<p>So one of the major flexibility for the default Singleton pattern is the lack of flexibility at runtime. Since any code consuming this service depends on the concrete implementation itself, we are unable to replace it with say an <code class="language-plaintext highlighter-rouge">ExtendedSomeService</code> or <code class="language-plaintext highlighter-rouge">MockSomeService</code>. To achieve extensiblity at runtime, while also having a global access point, we can use the <a href="http://core.loyc.net/essentials/ambient-service-pattern.html">Ambient Context Pattern</a>. Let’s start with seeing the implementation directly.</p>
+
+<p>(Also hey, sound off in the comments if you want to see my take on ambient service/context pattern).</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">interface</span> <span class="nc">ISomeService</span> <span class="p">{</span> <span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">SomeService</span> <span class="p">:</span> <span class="n">ISomeService</span>
+<span class="p">{</span> <span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">MockSomeService</span> <span class="p">:</span> <span class="n">ISomeService</span>
+<span class="p">{</span> <span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">SomeServiceContext</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="n">ISomeService</span> <span class="n">Current</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Initialize</span><span class="p">(</span><span class="n">ISomeService</span> <span class="kt">object</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Current</span> <span class="p">=</span> <span class="kt">object</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>And then we can initialize or use the like so:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Initialization in the application code</span>
+<span class="n">SomeServiceContext</span><span class="p">.</span><span class="nf">Initialize</span><span class="p">(</span><span class="k">new</span> <span class="nf">SomeService</span><span class="p">());</span>
+
+<span class="c1">// Intialization in unit tests</span>
+<span class="n">SomeServiceContext</span><span class="p">.</span><span class="nf">Initialize</span><span class="p">(</span><span class="k">new</span> <span class="nf">MockSomeService</span><span class="p">());</span>
+</code></pre></div></div>
+
+<p>Now to access SomeService, we always use the <code class="language-plaintext highlighter-rouge">SomeServiceContext.Current</code> property and use the <code class="language-plaintext highlighter-rouge">Initialize</code> method to change the concrete implementation at runtime, thus giving us more flexibility. Also introducing the interface for <code class="language-plaintext highlighter-rouge">SomeService</code> allows us to extend or mock the existing service code and still make it usable with our <code class="language-plaintext highlighter-rouge">SomeServiceContextClass</code> to access the modified version without modiying the usage points of this service.</p>
+
+<p>The most obvious pro of jumping through these hoops is to achieve runtime flexibility. Also since now <code class="language-plaintext highlighter-rouge">SomeService</code> only does its own work, we are not violating the Single Responsiblity Principle.</p>
+
+<p>Now about the glaring <strong>Con</strong>: This is not the Singleton pattern anymore. As it is visibile clearly, now someone can create many many instances of the singleton service class and they might not be the same as accessed from the context class.</p>
+
+<h3 id="another-variant-of-this-pattern-using-an-initializerfactory-method">Another variant of this pattern using an initializer/factory method</h3>
+
+<p>Another variant of this same pattern is to use a factory method that is responsible to create the current instance, and it will look something like this:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">SomeServiceContext</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="n">ISomeService</span> <span class="n">Current</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Initialize</span><span class="p">(</span><span class="n">Func</span><span class="p">&lt;</span><span class="n">ISomeService</span><span class="p">&gt;</span> <span class="n">someSvcFactory</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Current</span> <span class="p">=</span> <span class="nf">someSvcFactory</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>It can also be implemented as:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">SomeServiceContext</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="n">ISomeService</span> <span class="n">Current</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="c1">// This can also be implemented as</span>
+    <span class="k">private</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">Func</span><span class="p">&lt;</span><span class="n">ISomeService</span><span class="p">&gt;</span> <span class="n">_initializer</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">SetInitializer</span><span class="p">(</span><span class="n">Func</span><span class="p">&lt;</span><span class="n">ISomeService</span><span class="p">&gt;</span> <span class="n">initializer</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">_initializer</span> <span class="p">=</span> <span class="n">initializer</span><span class="p">;</span>
+        <span class="n">Current</span> <span class="p">=</span> <span class="nf">initializer</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>In this version, changing the initializer changes the singleton object returned.</p>
+
+<p>This and the other 2 implementations also leave one more hole in the codebase. We cannot forget to initialize singletons before using them otherwise it might cause issues. (I guess this is called <a href="https://blog.ploeh.dk/2011/05/24/DesignSmellTemporalCoupling/"><em>Temporal Coupling</em></a>?)</p>
+
+<p>Another approach here is to merge the <code class="language-plaintext highlighter-rouge">SomeService</code> and <code class="language-plaintext highlighter-rouge">SomeServiceContext</code> class, which although violates the single responsibility principle.</p>
+
+<h2 id="singleton-using-ioc-containers">Singleton using IoC Containers</h2>
+
+<p>Okay I cheated on this one. You can use the default <code class="language-plaintext highlighter-rouge">ServiceProvider</code> provided by .NET or some other IoC (Inversion of Control) container that lets us register an object with a lifetime scope and they provide a Singleton scope as well.</p>
+
+<p>We can then register a dependency on the object and the IoC container will provide us the instance with a Singleton lifetime. That way, the main goal of keeping the object a singleton across the code, is achieved.</p>
+
+<p>Since we are using the IoC container (and registration is usually against an interface), this makes the consuming code easily unit testable. It also doesn’t violate Single Responsibility Principle since now the creation is the concern of the IoC container.</p>
+
+<p>The con still exists that nothing’s stopping you to create multiple instances of <code class="language-plaintext highlighter-rouge">SomeService</code> in your code.</p>
+
+<h2 id="modelling-the-singleton-a-dependency-in-the-consuming-class">Modelling the Singleton a Dependency in the Consuming class</h2>
+
+<p>There is one more shortcut to reduce the control the dependency in the consuming code for the singleton service while mostly using the default pattern. The consuming code can take the singleton as a dependency in the constructor with default value as the default singleton’s instance, like so:</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="n">ConsumingService</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="n">SomeService</span> <span class="n">_someServiceInstance</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">ConsumingService</span><span class="p">(</span><span class="n">SomeService</span> <span class="n">instance</span> <span class="p">=</span> <span class="n">SomeService</span><span class="p">.</span><span class="n">Instance</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">_someServiceInstance</span> <span class="p">=</span> <span class="n">instance</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now for testability, we can pass a mock for the SomeService code instead of actual service and we get runtime flexibility without adopting the ambient context pattern.</p>
+
+<h2 id="closing-thoughts">Closing Thoughts</h2>
+
+<p>Singleton pattern is quite useful for ambient services, but their default implementation is not that great. Singleton can be a good pattern if:</p>
+
+<ul>
+  <li>It doesn’t have a state which can be modified in different parts of the application and affect the behvior of all the other parts.</li>
+  <li>You use the different implementations discussed above or a combination of those so that the consuming code is more testable and easy to work with.</li>
+  <li>The use/dependency of the singleton is not hidden deeply into the code.</li>
+  <li>Otherwise use the singleton in a code that will not be unit tested.</li>
+</ul>
+
+<p>And I end with a generic statement, this pattern can be good, given its used wisely!</p>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="mitesh1612/blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/blog/2021/12/10/singleton-antipattern" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Mitesh Shah&#39;s Developer Blog, made using Fastpages</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/mitesh1612" title="mitesh1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/mitesh_1612" title="mitesh_1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
