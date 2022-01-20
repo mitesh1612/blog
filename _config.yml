@@ -66,6 +66,7 @@ exclude:
   - action.yml
   - Makefile
   - demo-post.txt
+  - NewPostScript.ps1
 
 # this setting allows you to keep pages organized in the _pages folder
 include:
