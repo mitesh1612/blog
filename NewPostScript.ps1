@@ -13,7 +13,7 @@ $Title = Read-Host -Prompt "Enter the title of the post"
 
 # Create the file name
 
-$DateToday = Get-Date -Format yyyy-mm-dd
+$DateToday = Get-Date -Format yyyy-MM-dd
 $FileName = $DateToday  + "-" + $FileTitle +  ".md"
 
 $FileContent = "---
@@ -27,3 +27,8 @@ comments: true
 "
 
 New-Item -Path "_posts/" -Name $FileName -Type File -Value $FileContent
+
+$FilePath = "_posts/" + $FileName
+
+# Run VS Code
+code $FilePath --add .
