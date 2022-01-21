@@ -8,15 +8,15 @@
 <meta name="generator" content="Jekyll v4.1.1" />
 <meta property="og:title" content="A Deep Dive into C#’s CancellationToken" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="An introduction and deep dive into CancellationToken to achieve cancellation in asynchronous operations, alongwith recommended patterns to use it." />
-<meta property="og:description" content="An introduction and deep dive into CancellationToken to achieve cancellation in asynchronous operations, alongwith recommended patterns to use it." />
+<meta name="description" content="A deep dive into C#’s CancellationToken, how to work with them and some recommended patterns while adopting them." />
+<meta property="og:description" content="A deep dive into C#’s CancellationToken, how to work with them and some recommended patterns while adopting them." />
 <link rel="canonical" href="https://mitesh1612.github.io/blog/2022/01/20/cancellation-tokens" />
 <meta property="og:url" content="https://mitesh1612.github.io/blog/2022/01/20/cancellation-tokens" />
 <meta property="og:site_name" content="Mitesh Shah’s Blog" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2022-01-20T00:00:00-06:00" />
 <script type="application/ld+json">
-{"url":"https://mitesh1612.github.io/blog/2022/01/20/cancellation-tokens","@type":"BlogPosting","headline":"A Deep Dive into C#’s CancellationToken","dateModified":"2022-01-20T00:00:00-06:00","datePublished":"2022-01-20T00:00:00-06:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mitesh1612.github.io/blog/2022/01/20/cancellation-tokens"},"description":"An introduction and deep dive into CancellationToken to achieve cancellation in asynchronous operations, alongwith recommended patterns to use it.","@context":"https://schema.org"}</script>
+{"url":"https://mitesh1612.github.io/blog/2022/01/20/cancellation-tokens","@type":"BlogPosting","headline":"A Deep Dive into C#’s CancellationToken","dateModified":"2022-01-20T00:00:00-06:00","datePublished":"2022-01-20T00:00:00-06:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mitesh1612.github.io/blog/2022/01/20/cancellation-tokens"},"description":"A deep dive into C#’s CancellationToken, how to work with them and some recommended patterns while adopting them.","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://mitesh1612.github.io/blog/feed.xml" title="Mitesh Shah's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
@@ -87,7 +87,7 @@ window.onload = wrap_img;
         <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">A Deep Dive into C#&#39;s CancellationToken</h1><p class="page-description">An introduction and deep dive into CancellationToken to achieve cancellation in asynchronous operations, alongwith recommended patterns to use it.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-01-20T00:00:00-06:00" itemprop="datePublished">
+    <h1 class="post-title p-name" itemprop="name headline">A Deep Dive into C#&#39;s CancellationToken</h1><p class="page-description">A deep dive into C#'s CancellationToken, how to work with them and some recommended patterns while adopting them.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-01-20T00:00:00-06:00" itemprop="datePublished">
         Jan 20, 2022
       </time>
        • <span class="read-time" title="Estimated read time">
@@ -391,9 +391,19 @@ window.onload = wrap_img;
 <span class="p">}</span>
 </code></pre></div></div>
 
+<h2 id="some-references">Some references</h2>
+
+<p>If you want an even deeper dive into this topic, here are some references that you might consider:</p>
+
+<ol>
+  <li><a href="https://docs.microsoft.com/en-us/dotnet/standard/threading/cancellation-in-managed-threads">Microsoft Docs on Cancelling Managed threads</a></li>
+  <li><a href="https://devblogs.microsoft.com/premier-developer/recommended-patterns-for-cancellationtoken/">Recommended Patterns for Cancellation Tokens</a></li>
+  <li>Andrew Lock’s amazing post on <a href="https://andrewlock.net/using-cancellationtokens-in-asp-net-core-mvc-controllers/">how to use cancellation tokens in MVC Controllers</a></li>
+</ol>
+
 <h2 id="in-conclusion">In conclusion</h2>
 
-<p>This post became inceremoniously too long, but it stands as a great reference on how CancellationTokens work, how to listen to them and what design considerations should be done while using it. Let me know in the comments if you liked this deep dive or felt it was too long and textual. Also do sound off if you want me to do deep dives on other topics as well.</p>
+<p>This post became unceremoniously too long, but it stands as a great reference on how CancellationTokens work, how to listen to them and what design considerations should be done while using it. Let me know in the comments if you liked this deep dive or felt it was too long and textual. Also do sound off if you want me to do deep dives on other topics as well.</p>
 
 <p>If you liked what you read, you can try reading some other posts on my blog as well, and you can also connect with me on my socials. Until next time. 😊</p>
 
