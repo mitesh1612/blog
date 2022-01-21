@@ -44,7 +44,7 @@ Sometime ago, there was a scam on twitter where accounts of [famous people like 
 
 ![]({{ site.baseurl }}/images/2020-08-30-naive-bayes/spameqn.png)
 
-The numerator is the probability that a message is spam *and* contains *bitcoin*, while the denominator is just the probability that a message contains *bitcoin*. How? P(B/S)P(S) = P(B,S) using the definition of conditional probablity (on which I did write a [fun post you can read here](http://mitesh1612.github.io/blog/Conditional-Probability-and-Families)) and the denominator is essentially P(B). In this sense, we can think of this calculation simply representing the **proportion** of *bitcoin* messages are spam.
+The numerator is the probability that a message is spam *and* contains *bitcoin*, while the denominator is just the probability that a message contains *bitcoin*. How? P(B/S)P(S) = P(B,S) using the definition of conditional probablity (on which I did write a [fun post you can read here](2020-08-14-conditional-probability.md)) and the denominator is essentially P(B). In this sense, we can think of this calculation simply representing the **proportion** of *bitcoin* messages are spam.
 
 Say we have a large number of messages that we know are **spam** and a large collection of messages that we know are **ham** (the word used for not spam commonly). Using that we can easily estimate P(B/S) and P(B/S'). Let's make an assumption that it is equally likely that a message is spam or ham. Then P(S) = P(S') = 0.5. Taking out the common term in the above equation, we get
 
