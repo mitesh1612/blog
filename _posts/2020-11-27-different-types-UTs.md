@@ -185,6 +185,6 @@ As I said, there is *no one size fits all* and each type of unit test is great i
 
 Also, remember that test is code too. Like production code that will be deployed, we should make testing code more maintainable, avoid duplication and scalable to new cases.
 
-I hope this post and [the previous post](https://mitesh1612.github.io/blog/2020/10/06/software-testing) gives you some ideas to help your test code be even better that it already is. 😀
+I hope this post and [the previous post]({% post_url 2020-10-06-software-testing %}) gives you some ideas to help your test code be even better that it already is. 😀
 
 Hope you enjoyed this post. If you just discovered my blog, do try reading some other posts from me. You can always connect with me on my socials to discuss or engage in conversations about software development with me.
