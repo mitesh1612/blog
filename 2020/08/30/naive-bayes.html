@@ -152,7 +152,7 @@ window.onload = wrap_img;
 
 <p><img src="/blog/images/2020-08-30-naive-bayes/spameqn.png" alt="" /></p>
 
-<p>The numerator is the probability that a message is spam <em>and</em> contains <em>bitcoin</em>, while the denominator is just the probability that a message contains <em>bitcoin</em>. How? P(B/S)P(S) = P(B,S) using the definition of conditional probablity (on which I did write a <a href="2020-08-14-conditional-probability.md">fun post you can read here</a>) and the denominator is essentially P(B). In this sense, we can think of this calculation simply representing the <strong>proportion</strong> of <em>bitcoin</em> messages are spam.</p>
+<p>The numerator is the probability that a message is spam <em>and</em> contains <em>bitcoin</em>, while the denominator is just the probability that a message contains <em>bitcoin</em>. How? P(B/S)P(S) = P(B,S) using the definition of conditional probablity (on which I did write a <a href="https://mitesh1612.github.io/blog/2020/08/14/conditional-probability">fun post you can read here</a>) and the denominator is essentially P(B). In this sense, we can think of this calculation simply representing the <strong>proportion</strong> of <em>bitcoin</em> messages are spam.</p>
 
 <p>Say we have a large number of messages that we know are <strong>spam</strong> and a large collection of messages that we know are <strong>ham</strong> (the word used for not spam commonly). Using that we can easily estimate P(B/S) and P(B/S’). Let’s make an assumption that it is equally likely that a message is spam or ham. Then P(S) = P(S’) = 0.5. Taking out the common term in the above equation, we get</p>
 
