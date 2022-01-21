@@ -1,7 +1,7 @@
 ---
 toc: false
 layout: post
-description: An introduction and deep dive into CancellationToken to achieve cancellation in asynchronous operations, alongwith recommended patterns to use it.
+description: A deep dive into C#'s CancellationToken, how to work with them and some recommended patterns while adopting them.
 categories: [C#, deep-dive, asynchronous]
 title: A Deep Dive into C#'s CancellationToken
 comments: true
@@ -287,8 +287,16 @@ async Task SendResultAsync(CancellationToken cancellationToken)
 }
 ```
 
+## Some references
+
+If you want an even deeper dive into this topic, here are some references that you might consider:
+
+1. [Microsoft Docs on Cancelling Managed threads](https://docs.microsoft.com/en-us/dotnet/standard/threading/cancellation-in-managed-threads)
+2. [Recommended Patterns for Cancellation Tokens](https://devblogs.microsoft.com/premier-developer/recommended-patterns-for-cancellationtoken/)
+3. Andrew Lock's amazing post on [how to use cancellation tokens in MVC Controllers](https://andrewlock.net/using-cancellationtokens-in-asp-net-core-mvc-controllers/)
+
 ## In conclusion
 
-This post became inceremoniously too long, but it stands as a great reference on how CancellationTokens work, how to listen to them and what design considerations should be done while using it. Let me know in the comments if you liked this deep dive or felt it was too long and textual. Also do sound off if you want me to do deep dives on other topics as well.
+This post became unceremoniously too long, but it stands as a great reference on how CancellationTokens work, how to listen to them and what design considerations should be done while using it. Let me know in the comments if you liked this deep dive or felt it was too long and textual. Also do sound off if you want me to do deep dives on other topics as well.
 
 If you liked what you read, you can try reading some other posts on my blog as well, and you can also connect with me on my socials. Until next time. 😊
