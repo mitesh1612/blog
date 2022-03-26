@@ -8,9 +8,9 @@ image: images/2022-03-26-journey-to-the-cloud/herosplash.png
 comments: true
 ---
 
-This is a different style of deep dive. Today we will be taking a deep journey into the cloud, from where we started to where we are now and where we might go. For experience devs, this might not be super interestng and they will be familiar with a lot of concepts we will be talking about. But I love the journey and the innovations that were made along the way to reach where we are right now, and hence this post.
+This is a different style of deep dive. Today we will be taking a deep journey into the cloud, from where we started to where we are now and where we might go. For experienced devs, this might not be super interesting and they will be familiar with a lot of concepts we will be talking about. But I love the journey and the innovations that were made along the way to reach where we are right now, and hence this post.
 
-Also a sidenote, since I am only experienced with Azure mostly at the moment, I will try to avoid talking about specific cloud offerings here from any provider (to not make it a info doc about various services offered by different providers) and instead focus on the general concepts but there might be references to common offerings or their equivalents with major cloud providers. With all that, let's begin
+Also a side note, since I am only experienced with Azure mostly at the moment, I will try to avoid talking about specific cloud offerings here from any provider (to not make it a info doc about various services offered by Azure) and instead focus on the general concepts but there might be references to common offerings or their equivalents with major cloud providers. With all that, let's begin
 
 ## Introduction
 
@@ -74,7 +74,7 @@ Now after choosing Load Balancers, we also need to determine how to do **Automat
 
 In case of IaaS, since we are provisioning servers manually, we can setup automation using scripts or full blown applications that can hook into the metrics and monitoring information of our existing servers and consequently scale them up or down by provisioning or deprovisioning new servers.
 
-This all form IaaS as signified in the image below.
+This all forms IaaS as signified in the image below.
 
 ![]({{ site.baseurl }}/images/2022-03-26-journey-to-the-cloud/iaas.png)
 
@@ -97,9 +97,9 @@ Heroku also supported choosing number of servers to host the app on and all the 
 
 This opinionated and simplified hosting become the foundation of PaaS.
 
-![]({{ site.baseurl }}/images/2022-03-26-journey-to-the-cloud/anatomyofpaas.png)
+![]({{ site.baseurl }}/images/2022-03-26-journey-to-the-cloud/anatomyofpaas.png "Anatomy of a PaaS")
 
-### Talking about Docker and Kubernetes
+### Talking about Docker and Kubernetes : Containers as a Service?
 
 Heroku relied on specific packaging style for your code and other similar attempts were made to do the same. Like fixing the name of your application binary (e.g. AppServer.exe), fixing the start command for your application (e.g. `npm run start`) and fixing ports where your application can run (like 8080 etc). There were attempts to standardize all of this, but it never went off. But luckily, a standardized format for packaging your application and its dependencies was already there: *Docker Containers*.
 
@@ -160,7 +160,7 @@ This is the limit. In this case, as a user you directly get a software, as a ser
 
 These run completely on the cloud and are completely managed by the vendor that is providing the software.
 
-![]({{ site.baseurl }}/images/2022-03-26-journey-to-the-cloud/anatomyofpaas.png)
+![]({{ site.baseurl }}/images/2022-03-26-journey-to-the-cloud/saas.png)
 
 ## In closing 
 
@@ -175,7 +175,7 @@ Interestingly, the more managed a service gets, the less freedom you get on how 
 
 Also, since I love Pizza 🍕 and I also love Analogies, here is a comparision of onprem, IaaS, PaaS, FaaS and SaaS in terms of Pizza (source linked in references):
 
-![]({{ site.baseurl }}/images/2022-03-26-journey-to-the-cloud/pizzaas.png)
+![]({{ site.baseurl }}/images/2022-03-26-journey-to-the-cloud/pizzaaas.png)
 
 This has been a bird's eye view on all the different kinds of services the cloud provides. If you want me to do deep dives on some specific topic in these, do sound off in the comments.
 
