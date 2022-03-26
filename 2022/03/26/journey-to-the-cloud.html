@@ -119,9 +119,9 @@ window.onload = wrap_img;
     </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    <p>This is a different style of deep dive. Today we will be taking a deep journey into the cloud, from where we started to where we are now and where we might go. For experience devs, this might not be super interestng and they will be familiar with a lot of concepts we will be talking about. But I love the journey and the innovations that were made along the way to reach where we are right now, and hence this post.</p>
+    <p>This is a different style of deep dive. Today we will be taking a deep journey into the cloud, from where we started to where we are now and where we might go. For experienced devs, this might not be super interesting and they will be familiar with a lot of concepts we will be talking about. But I love the journey and the innovations that were made along the way to reach where we are right now, and hence this post.</p>
 
-<p>Also a sidenote, since I am only experienced with Azure mostly at the moment, I will try to avoid talking about specific cloud offerings here from any provider (to not make it a info doc about various services offered by different providers) and instead focus on the general concepts but there might be references to common offerings or their equivalents with major cloud providers. With all that, let’s begin</p>
+<p>Also a side note, since I am only experienced with Azure mostly at the moment, I will try to avoid talking about specific cloud offerings here from any provider (to not make it a info doc about various services offered by Azure) and instead focus on the general concepts but there might be references to common offerings or their equivalents with major cloud providers. With all that, let’s begin</p>
 
 <h2 id="introduction">Introduction</h2>
 
@@ -185,7 +185,7 @@ window.onload = wrap_img;
 
 <p>In case of IaaS, since we are provisioning servers manually, we can setup automation using scripts or full blown applications that can hook into the metrics and monitoring information of our existing servers and consequently scale them up or down by provisioning or deprovisioning new servers.</p>
 
-<p>This all form IaaS as signified in the image below.</p>
+<p>This all forms IaaS as signified in the image below.</p>
 
 <p><img src="/blog/images/2022-03-26-journey-to-the-cloud/iaas.png" alt="" /></p>
 
@@ -207,9 +207,9 @@ window.onload = wrap_img;
 
 <p>This opinionated and simplified hosting become the foundation of PaaS.</p>
 
-<p><img src="/blog/images/2022-03-26-journey-to-the-cloud/anatomyofpaas.png" alt="" /></p>
+<p><img src="/blog/images/2022-03-26-journey-to-the-cloud/anatomyofpaas.png" alt="" title="Anatomy of a PaaS" /></p>
 
-<h3 id="talking-about-docker-and-kubernetes">Talking about Docker and Kubernetes</h3>
+<h3 id="talking-about-docker-and-kubernetes--containers-as-a-service">Talking about Docker and Kubernetes : Containers as a Service?</h3>
 
 <p>Heroku relied on specific packaging style for your code and other similar attempts were made to do the same. Like fixing the name of your application binary (e.g. AppServer.exe), fixing the start command for your application (e.g. <code class="language-plaintext highlighter-rouge">npm run start</code>) and fixing ports where your application can run (like 8080 etc). There were attempts to standardize all of this, but it never went off. But luckily, a standardized format for packaging your application and its dependencies was already there: <em>Docker Containers</em>.</p>
 
@@ -271,7 +271,7 @@ window.onload = wrap_img;
 
 <p>These run completely on the cloud and are completely managed by the vendor that is providing the software.</p>
 
-<p><img src="/blog/images/2022-03-26-journey-to-the-cloud/anatomyofpaas.png" alt="" /></p>
+<p><img src="/blog/images/2022-03-26-journey-to-the-cloud/saas.png" alt="" /></p>
 
 <h2 id="in-closing">In closing</h2>
 
@@ -288,7 +288,7 @@ window.onload = wrap_img;
 
 <p>Also, since I love Pizza 🍕 and I also love Analogies, here is a comparision of onprem, IaaS, PaaS, FaaS and SaaS in terms of Pizza (source linked in references):</p>
 
-<p><img src="/blog/images/2022-03-26-journey-to-the-cloud/pizzaas.png" alt="" /></p>
+<p><img src="/blog/images/2022-03-26-journey-to-the-cloud/pizzaaas.png" alt="" /></p>
 
 <p>This has been a bird’s eye view on all the different kinds of services the cloud provides. If you want me to do deep dives on some specific topic in these, do sound off in the comments.</p>
 
