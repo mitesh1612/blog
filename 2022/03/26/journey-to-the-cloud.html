@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>A Journey into the Cloud | Mitesh Shah’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="A Journey into the Cloud" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A bird’s eye view of Cloud Computing, different kinds of services available and some essential concepts along the way." />
+<meta property="og:description" content="A bird’s eye view of Cloud Computing, different kinds of services available and some essential concepts along the way." />
+<link rel="canonical" href="https://mitesh1612.github.io/blog/2022/03/26/journey-to-the-cloud" />
+<meta property="og:url" content="https://mitesh1612.github.io/blog/2022/03/26/journey-to-the-cloud" />
+<meta property="og:site_name" content="Mitesh Shah’s Blog" />
+<meta property="og:image" content="https://mitesh1612.github.io/blog/images/2022-03-26-journey-to-the-cloud/herosplash.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-03-26T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://mitesh1612.github.io/blog/2022/03/26/journey-to-the-cloud","@type":"BlogPosting","headline":"A Journey into the Cloud","dateModified":"2022-03-26T00:00:00-05:00","datePublished":"2022-03-26T00:00:00-05:00","image":"https://mitesh1612.github.io/blog/images/2022-03-26-journey-to-the-cloud/herosplash.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://mitesh1612.github.io/blog/2022/03/26/journey-to-the-cloud"},"description":"A bird’s eye view of Cloud Computing, different kinds of services available and some essential concepts along the way.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://mitesh1612.github.io/blog/feed.xml" title="Mitesh Shah's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Mitesh Shah&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">A Journey into the Cloud</h1><p class="page-description">A bird's eye view of Cloud Computing, different kinds of services available and some essential concepts along the way.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-03-26T00:00:00-05:00" itemprop="datePublished">
+        Mar 26, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      17 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#Cloud">Cloud</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#Azure">Azure</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#IaaS">IaaS</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#PaaS">PaaS</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>This is a different style of deep dive. Today we will be taking a deep journey into the cloud, from where we started to where we are now and where we might go. For experience devs, this might not be super interestng and they will be familiar with a lot of concepts we will be talking about. But I love the journey and the innovations that were made along the way to reach where we are right now, and hence this post.</p>
+
+<p>Also a sidenote, since I am only experienced with Azure mostly at the moment, I will try to avoid talking about specific cloud offerings here from any provider (to not make it a info doc about various services offered by different providers) and instead focus on the general concepts but there might be references to common offerings or their equivalents with major cloud providers. With all that, let’s begin</p>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>Chances are, if you are working as a software developer, you are deploying your code to the cloud and make it run on servers instantly. How did we get here?</p>
+
+<p>The common stages of creating an application is writing code, packaging said code and then deploying that package to some server/machine where it runs (and makes money 💵 for you).</p>
+
+<p>Say I built a billion dollar app idea and I want to make this available to tons of users, what are my options?</p>
+
+<h2 id="roll-my-own-servers-onprem">Roll my own servers? Onprem</h2>
+
+<p>Assuming the Azure, AWS and GCPs of the world didnt exist, we would have to roll out our own servers and deploy and run our code on them. Seems easy enough, right? Well in reality, its not that simple. Rolling out your infrastructure requires a lot of management, building servers, managing their power (with backup), cooling them down, managing their network and other various such problems.</p>
+
+<p>I come from India, where the temparatures are usually very high and the cost of cooling my servers alone will be a lot. And this is a recurring theme. While its not hard to roll out your own servers, usually the cost will always be far higher than the cost of the cloud, especially if you are in early stages.</p>
+
+<p><img src="/blog/images/2022-03-26-journey-to-the-cloud/onpremises.png" alt="" /></p>
+
+<p>Then there is the process of managing these servers as well. You need to maintain replicas for everything such that in an unlikely event, if something happens to your hardware, consumer data is not lost. We also want to address the problem of being closer to where our users are to have lower latencies. That means an upfront cost of getting a place to host our infrastructure and then managing that said infrastructure. I can go on and on, but I think you get the idea.</p>
+
+<p>If after all this, you are still interested on how to roll your own servers, I would suggest going through this (although satirical), truly informative <a href="https://www.youtube.com/watch?v=QdHvS0D1zAI">Fireship Video</a>.</p>
+
+<h2 id="get-the-infrastructure--iaas">Get the Infrastructure : IaaS</h2>
+
+<p>IaaS or infrastructure is really a simple idea. A cloud provider provides you basic infrastructure (that’s managed by them) and you can decide how to run your application as well how to setup the infra, monitor and maintain it.</p>
+
+<h3 id="simple-iaas--virtual-machines">Simple IaaS : Virtual Machines</h3>
+
+<p>What’s the simplest infrastructure component we can get? A server or a virtual machine. AWS has EC2 (Elastic Compute Cloud), Azure has Virtual Machines and GCP has Compute Engine. In essence they are either real machines or servers rented to you as whole or split into smaller machines, using <em>virtualization</em> (and that’s why they are called virtual machines). The splitting is invisible to you as an end customer and for all intents and purposes, you get a single isolated functioning machine.</p>
+
+<p>Since you want your server to be available on the internet, you need to have a public IP address. This is the IP address that you can access your server from the internet. I will not go into much detail on dynamic IPs vs reserved IPs, since I am not procifient enough in networking (but hey some day).</p>
+
+<p>After getting the IP address, you can remote into your machine (using SSH or RDP), install our code package and run it. (<em>Note</em>: Running it might require us registering the application with process manager so that it keeps running even after we logout or gets started automatically if we restart the machine).</p>
+
+<h4 id="small-interlude--deploying-an-aspnet-app">Small interlude : Deploying an ASP.NET App</h4>
+
+<p>To give a rough idea of how a IaaS deployment will look, lets say we have a ASP.NET app that you want to deploy on a Virtual Machine. After getting a barebones VM with Windows installed, the first step we can do is to install the ASP.NET Core runtime. After that we can copy our packaged application and run it.</p>
+
+<p>After getting the IP address, we can also register this IP address to a well known name (and ease our users of not remembering an IP address).</p>
+
+<p>To monitor the application, we can log in to the VM and see the logs emitted by our application if something goes wrong. (Do note that there are services that ingest these logs and provide us with a dashboard to see the logs in a more meaningful way and they also provide metrics like CPU usage etc.).</p>
+
+<p>Again, this doesnt cover everything like OS Firewall, but this is mostly what it will take to deploy your application to the cloud in its most simplest format.</p>
+
+<h3 id="increasing-the-complexity-of-iaas">Increasing the Complexity of IaaS</h3>
+
+<p>Ofcourse, no application worth its money can be satisfied with a single server. As the number of users increases, your single paltry server will struggle to serve all your users. CPU and Memory usage will be maxed out. What do we do then? We can opt for more capable machines and keep on adding CPU cores and memory. This is referred to as <strong>vertical scaling</strong>. But this can be only done to a certain limit.</p>
+
+<p>So another option becomes to do <strong>horizontal scaling</strong> where instead of using a single server, we deploy copies of the same server (and these servers need not be super capable, they can be commodity hardware as well).</p>
+
+<p><img src="/blog/images/2022-03-26-journey-to-the-cloud/scaling.png" alt="" /></p>
+
+<p>Now for horizontal scaling, we can easily deploy multiple servers and set them up. But now we need a new system, that can <em>balance the load</em> and <em>support fail over</em> (ignore servers which dont work).</p>
+
+<p>That’s were Load Balancers come in. Now Load Balancers is a complex topic (sound off if you want to learn more and I will try to cover it in a later post), so I will try to give you a brief overview of what kind of Load Balancers are available and how to choose.</p>
+
+<p>Using Load Balancers should be transparent and they should be fast. Additionally they should support the protocols that we use in our application. (Another important requirement is that they should be able to handle TLS/SSL termination). There are good open source load balancers like Nginx and HAProxy which are software based Load Balancers. (There are hardware based load balancers as well but we are more interested on how this is handled on the cloud).</p>
+
+<p>Load Balancers also come in 2 categories: <strong>Network</strong> (or) <strong>L4 Load Balancers</strong> and <strong>Application</strong> (or) <strong>L7 Load Balancers</strong>.</p>
+
+<p>Now after choosing Load Balancers, we also need to determine how to do <strong>Automatic Scaling</strong>. Predicting the server load is hard and we cant have a fixed number of servers for ourselves. For example there might be usage spikes during certain times of day where we might need more servers to handle more requests whereas other times, during low usage hours, we can do away with lesser servers (and save money as well!).</p>
+
+<p>In case of IaaS, since we are provisioning servers manually, we can setup automation using scripts or full blown applications that can hook into the metrics and monitoring information of our existing servers and consequently scale them up or down by provisioning or deprovisioning new servers.</p>
+
+<p>This all form IaaS as signified in the image below.</p>
+
+<p><img src="/blog/images/2022-03-26-journey-to-the-cloud/iaas.png" alt="" /></p>
+
+<h2 id="lets-do-one-better--paas">Let’s do one better : PaaS</h2>
+
+<p>If all of the above seems like a chore to get your application out, well it is. When going with IaaS, developers need to think about security, scale and management for their infrastructure and work accordingly. These are common problems and these can be abstracted out to make lives easier.</p>
+
+<p>So <strong>PaaS</strong> or <em>Platform-as-a-Service</em> goes one step further.</p>
+
+<p>Let’s say you want to deploy a ASP.NET app. The infrastructure or the servers required to run that app follow some really specific configuration (having some proper version of the runtime installed etc). A PaaS handles all of that for you.</p>
+
+<p>What we have is essentially a platform for creating software, as a service.</p>
+
+<p>In a PaaS, a developer can upload their code and the underlying Platform takes care of provisioning required infrastructure and providing scaling and security capabilities as well. But hey lets not rush here</p>
+
+<p>One of the pioneers for this type of solution was Heroku, which was initially built to host Rails applications. Heroku took the Rails ideas of convention over configuration and applied them to server deployment, promising that if you had a conventional Rails application they would use that knowledge to handle packaging and deployment tasks for you. You can provide Heroku access to your code and it will take care of packaging the code, run on fully managed virtual servers. There was also a common layer that handles load balancing.</p>
+
+<p>Heroku also supported choosing number of servers to host the app on and all the logs that your application emitted would be captured and provided to you.</p>
+
+<p>This opinionated and simplified hosting become the foundation of PaaS.</p>
+
+<p><img src="/blog/images/2022-03-26-journey-to-the-cloud/anatomyofpaas.png" alt="" /></p>
+
+<h3 id="talking-about-docker-and-kubernetes">Talking about Docker and Kubernetes</h3>
+
+<p>Heroku relied on specific packaging style for your code and other similar attempts were made to do the same. Like fixing the name of your application binary (e.g. AppServer.exe), fixing the start command for your application (e.g. <code class="language-plaintext highlighter-rouge">npm run start</code>) and fixing ports where your application can run (like 8080 etc). There were attempts to standardize all of this, but it never went off. But luckily, a standardized format for packaging your application and its dependencies was already there: <em>Docker Containers</em>.</p>
+
+<p>Docker containers gave you  a way to fully standardize the OS, patches, dependencies, application code and configuration setup—all in a way that a container could be created right on the local development machine. A container created this way would run exactly the same on any server.</p>
+
+<p>Now for deploying these packages or containers, cloud companies can get creative on how they can take that package and run it for you. This gave the idea of <em>orchestration</em>, which allows you to use your severs as one giant pool, or cluster, of computing capacity—and run as few or as many containers as you need for each of your applications, in that cluster.</p>
+
+<p>An orchestrator can handle your deployments, keep track of which servers have which containers running on them, which servers have capacity available to run more, where the best place is to run the next container, and the list of containers and their IP address / port combinations that are running as part of each application. These orchestrators can then provide their own load balancing systems, or integrate with the existing load balancers on offer. This entire containerization &amp; orchestration ecosystem allows you to abstract away the concept of a server—it doesn’t matter what OS or version or software is installed on each server, because any server that has the orchestrator’s agent installed is now a source or raw computing power that and be added into your resource pool. Your applications will bundle the OS and dependencies of their choice along with code, so they don’t care at all about where or what they’re running on.</p>
+
+<p>Kubernetes is the most popular orchestrator and all famous cloud providers provide their own managed kubernetes services like AKS (Azure Kubernetes Service) in Azure, EKS (Elastic Kubernetes Service) in AWS or GKE (Google Kubernetes Engine) in GCP.</p>
+
+<p>Alongwith these, there are services like Azure Container Instances or Elastic Container Service to run one off containers and services that provide registries to store and pull these containers from (like Azure Container Registry etc.)</p>
+
+<h3 id="but-we-are-back-to-servers-again">But we are back to servers again?</h3>
+
+<p>Once we have cloud-managed orchestrators running our deployments on our server clusters, the obvious question arises—why do we need to manage these underlying servers in the first place? If these orchestrators are running on the cloud and the cloud companies are managing all these servers anyway, why not just integrate server management? This gave rise to a new set of services. These services allow you to set up your applications, specify how much CPU and RAM each container needs, and just let the cloud provider figure it out. They’ll treat their entire fleet of servers as one gigantic pool or cluster and give you exactly the capacity you need. They also apply their security experience to make sure your applications are completely isolated, even if they’re all technically running in the same cluster. Good examples here are Amazon Fargate or Google Cloud Run.</p>
+
+<p><img src="/blog/images/2022-03-26-journey-to-the-cloud/paas.png" alt="" /></p>
+
+<h2 id="jumping-to-the-next-level--faas">Jumping to the next level : FaaS</h2>
+
+<p>Now thinking about the servers was the main problem, so we came up with a term called <strong>Serverless</strong>. This is a misnomer. Serverless definitely doesn’t mean no servers, serverless is more like servers that you don’t think about.</p>
+
+<p>How did we get here? Cloud providers gave a method to take your code and just run it. Again this code needs to follow a particular API, particular tech stack and is packaged in a particular way and operates in a certain limit. But if the stars align, the cloud can do something magical. It can invoke your code exactly when its necessary, charge you for exactly how many times its invoked (or how much time it runs for) and do it instantly at any scale, and you never have to even think about a server.</p>
+
+<p>This is essentially like running a function on the cloud and not worry about anything else.</p>
+
+<p>A <strong>FaaS</strong>, or <em>functions-as-a-service</em> system, works very differently. Your application is not a stand-alone system here—it’s a smaller piece of code that fits tightly into a much larger framework offered by the FaaS system. It cannot run independently—it needs to follow the technology, dependency, packaging, deployment and execution rules of the FaaS, and it can run only in the context of that FaaS.</p>
+
+<p>In FaaS, the code can run as seldom as you want or as frequently you want.</p>
+
+<p>There is a big drawback here though. Sometimes there might be cases that since the function is not invoked that frequently, the cloud provider needs to “warm up” a server that is going to run this function. (Here warming up can include number of things like actually provisioning a server, or deploying your code package to a pre-provisioned server). Due to this, the first or the initial execution of a function might take longer. This is referred to <strong>cold start</strong> and is a common occurrence in a FaaS system. (Although companies are trying to mitigate this in various ways.)</p>
+
+<p>The other problem is limited stack and dependencies available. For example, earlier Functions only supported some common languages like JavaScript, Python, C#. Alongwith that, if your application relies on some dependency that is not usually part of the runtime, well good luck. Ofcourse, these problems are also tackled and there are solutions already for this as well.</p>
+
+<p>The famous big names here are Azure Functions, AWS Lambdas or Cloud Functions from GCP.</p>
+
+<h3 id="optional-interlude-how-does-faas-work">Optional Interlude, how does FaaS work?</h3>
+
+<p>If you are wondering how the FaaS systems work, here is an excerpt, straight from <a href="https://sudhir.io/the-big-little-guide-to-running-code-in-the-clouds">this excellent blog post</a></p>
+
+<blockquote>
+  <p>The cloud companies do this by first creating a smart event router—when an event comes to the router and needs your code to process it, the router will see if your code is already running in a slot. I’m making up the word slot here—I have no idea what they’re called internally. But these companies join the router with custom orchestrators that create a huge pool of secure, isolated execution slots on thousands or millions of their machines—when an event comes to the router and needs to be processed, the router looks to see if any of these slots is running your code. If none are, your code is loaded up from common network storage and initialized in a slot. The event is then passed as an input to your code, and after it finishes executing the output is routed to wherever it needs to go. Your code may be kept running in the slot for a while, in the hope that it might be used again soon, or the slot might be cleared and used with some other code.</p>
+</blockquote>
+
+<p>For the sake of completion, lets also talk about two, more concepts</p>
+
+<h2 id="baas--backend-as-a-service">BaaS : Backend as a Service</h2>
+
+<p>One step further from PaaS, this usually occurs where our application has a separate backend and frontend. In such cases, cloud can provide SDKs that bring the backend to the frontend and a developer can directly connect to a cloud backend without writing their own backend code.</p>
+
+<p>These SDKs can do multiple things like store things into the database, perform authentication, run some code based on some event etc.</p>
+
+<p>One of the most famous players in this space is Firebase alongwith services like AWS Amplify.</p>
+
+<h2 id="saas--software-as-a-service">SaaS : Software as a Service</h2>
+
+<p>This is the limit. In this case, as a user you directly get a software, as a service thats built on top of these cloud technologies and provides limited capabilities of what you can do. Usually SaaS tools are web based tools like Google Docs or Dropbox etc (they can have native apps as well, but they do talk to cloud infrastructure powering them).</p>
+
+<p>These run completely on the cloud and are completely managed by the vendor that is providing the software.</p>
+
+<p><img src="/blog/images/2022-03-26-journey-to-the-cloud/anatomyofpaas.png" alt="" /></p>
+
+<h2 id="in-closing">In closing</h2>
+
+<p><img src="/blog/images/2022-03-26-journey-to-the-cloud/herosplash.png" alt="" /></p>
+
+<p>The most important things I learned about cloud and deciding what to kind of services to go for relies on two concepts:</p>
+
+<ol>
+  <li>How much stuff do you want to be managed by you vs. the provider. Use the above diagram for reference</li>
+  <li>What kind of cost are you willing to pay.</li>
+</ol>
+
+<p>Interestingly, the more managed a service gets, the less freedom you get on how to write and run your code as well.</p>
+
+<p>Also, since I love Pizza 🍕 and I also love Analogies, here is a comparision of onprem, IaaS, PaaS, FaaS and SaaS in terms of Pizza (source linked in references):</p>
+
+<p><img src="/blog/images/2022-03-26-journey-to-the-cloud/pizzaas.png" alt="" /></p>
+
+<p>This has been a bird’s eye view on all the different kinds of services the cloud provides. If you want me to do deep dives on some specific topic in these, do sound off in the comments.</p>
+
+<p>If you liked what you read, you can try reading some other posts on my blog as well, and you can also connect with me on my socials. Until next time. 😊</p>
+
+<h2 id="references">References</h2>
+
+<p>This post will not have been possible without these 2 amazing references. If you think this post was good, just take a look at these resources 🤯</p>
+
+<ol>
+  <li><a href="https://sudhir.io/the-big-little-guide-to-running-code-in-the-clouds">The Big Little Guide to Running Code in the Cloud(s)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=1pBuwKwaHp0">Fireship’s Cloud Computing in the Year 2020 video</a></li>
+  <li><a href="https://www.crmsoftwareblog.com/2020/10/a-guide-to-microsoft-azure-your-crm-pizza-as-a-service-example">Guide to Microsoft Azure, Pizza as a Service Example</a></li>
+</ol>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="mitesh1612/blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/blog/2022/03/26/journey-to-the-cloud" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Mitesh Shah&#39;s Developer Blog, made using Fastpages</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/mitesh1612" target="_blank" title="mitesh1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/mitesh_1612" target="_blank" title="mitesh_1612"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
