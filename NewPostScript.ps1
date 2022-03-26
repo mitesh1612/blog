@@ -11,16 +11,19 @@ $FileTitle = Read-Host -Prompt "Enter the name of the file"
 
 $Title = Read-Host -Prompt "Enter the title of the post"
 
+$Categories = Read-Host -Prompt "Enter categories for this post (separate with commas)"
+
 # Create the file name
 
 $DateToday = Get-Date -Format yyyy-MM-dd
+$FileTitle = SanitizeFileTitle($FileTitle)
 $FileName = $DateToday  + "-" + $FileTitle +  ".md"
 
 $FileContent = "---
 toc: false
 layout: post
 description: 
-categories: 
+categories: [$Categories]
 title: $Title
 comments: true
 ---
