@@ -4,6 +4,7 @@
   /* ===== Override default Tailwind Typography styles ===== */
   .app-prose {
     @apply prose;
+    font-size: 1.125rem;
 
     h1,
     h2,
@@ -27,8 +28,7 @@
     ol,
     ul,
     figcaption,
-    table,
-    code {
+    table {
       @apply text-foreground;
     }
 
@@ -72,7 +72,8 @@
     }
 
     code {
-      @apply rounded bg-muted/75 p-1 wrap-break-word text-foreground before:content-none after:content-none;
+      @apply rounded p-1 font-mono wrap-break-word text-foreground before:content-none after:content-none;
+      background-color: var(--code-bg);
     }
 
     .astro-code code {
@@ -92,17 +93,27 @@
     }
 
     pre {
-      @apply focus-visible:border-transparent focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-dashed;
+      @apply font-mono focus-visible:border-transparent focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-dashed;
     }
   }
 
   /* ===== Code Blocks & Syntax Highlighting ===== */
   .astro-code {
-    @apply flex border bg-(--shiki-light-bg) text-(--shiki-light) outline-border [&_span]:text-(--shiki-light);
+    @apply flex border text-(--shiki-light) outline-border [&_span]:text-(--shiki-light);
+    background-color: var(--code-block-bg) !important;
   }
 
   html[data-theme="dark"] .astro-code {
-    @apply bg-(--shiki-dark-bg) text-(--shiki-dark) [&_span]:text-(--shiki-dark);
+    @apply text-(--shiki-dark) [&_span]:text-(--shiki-dark);
+    background-color: var(--code-block-bg) !important;
+  }
+
+  /* Boost comment contrast — min-light theme comments (#C2C3C5) are too faint */
+  .astro-code span[style*="--shiki-light:#C2C3C5"] {
+    --shiki-light: #8a8f99 !important;
+  }
+  .astro-code span[style*="--shiki-dark:#637777"] {
+    --shiki-dark: #8ba0a0 !important;
   }
 
   /* Styles for Shiki transformers */

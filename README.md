@@ -14,6 +14,7 @@ My personal developer blog — posts on Software Development, Testing, Cloud, Ma
 | **Search** | [Pagefind](https://pagefind.app/) (static, built at compile time) |
 | **Math/LaTeX** | [KaTeX](https://katex.org/) via `remark-math` + `rehype-katex` |
 | **Syntax Highlighting** | [Shiki](https://shiki.style/) with notation transformers |
+| **Callouts** | `remark-directive` with custom callout plugin |
 | **OG Images** | Auto-generated via [Satori](https://github.com/vercel/satori) + [resvg](https://github.com/nicolo-ribaudo/resvg-js) |
 | **Deployment** | GitHub Pages (via GitHub Actions) |
 | **Type Checking** | [TypeScript](https://www.typescriptlang.org/) |
@@ -112,6 +113,9 @@ $$
 \int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
 $$
 ```
+## Writing Guide
+
+See [`docs/writing-guide.md`](docs/writing-guide.md) for a complete showcase of all components and features.
 
 ## 📁 Project Structure
 
