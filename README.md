@@ -1,31 +1,144 @@
-[//]: # (This template replaces README.md when someone creates a new repo with the fastpages template.)
-
-![](https://github.com/mitesh1612/blog/workflows/CI/badge.svg) 
-![](https://github.com/mitesh1612/blog/workflows/GH-Pages%20Status/badge.svg) 
-[![](https://img.shields.io/static/v1?label=fastai&message=fastpages&color=57aeac&labelColor=black&style=flat&logo=data:image/png;base64,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)](https://github.com/fastai/fastpages)
-
-https://mitesh1612.github.io/blog/
-
 # Mitesh Shah's Blog
 
-Hey there, this is my personal blog setup which is _powered by [fastpages](https://github.com/fastai/fastpages)_.
+My personal developer blog — posts on Software Development, Testing, Cloud, Machine Learning and more.
 
-## See the blog live
+🔗 **Live at**: [mitesh1612.github.io/blog](https://mitesh1612.github.io/blog/)
 
-To check out the live version of the site in all of it's glory, head over to:
+## 🔧 Tech Stack
 
-### https://mitesh1612.github.io/blog
+| Layer | Technology |
+|-------|-----------|
+| **Framework** | [Astro](https://astro.build/) |
+| **Theme** | [AstroPaper v5](https://github.com/satnaing/astro-paper) |
+| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) |
+| **Search** | [Pagefind](https://pagefind.app/) (static, built at compile time) |
+| **Math/LaTeX** | [KaTeX](https://katex.org/) via `remark-math` + `rehype-katex` |
+| **Syntax Highlighting** | [Shiki](https://shiki.style/) with notation transformers |
+| **OG Images** | Auto-generated via [Satori](https://github.com/vercel/satori) + [resvg](https://github.com/nicolo-ribaudo/resvg-js) |
+| **Deployment** | GitHub Pages (via GitHub Actions) |
+| **Type Checking** | [TypeScript](https://www.typescriptlang.org/) |
+| **Linting** | [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/) |
 
-## What To Do Next?
+## 🚀 Running Locally
 
-Here are some useful documents for this blog.
+**Prerequisites**: [Node.js](https://nodejs.org/) v20+
 
-- [Writing Blogs With Jupyter](https://github.com/fastai/fastpages#writing-blog-posts-with-jupyter)
+```bash
+# Install dependencies
+npm install
 
-- [Writing Blogs With Markdown](https://github.com/fastai/fastpages#writing-blog-posts-with-markdown)
+# Start the dev server (available at http://localhost:4321/blog/)
+npm run dev
 
-- [Writing Blog Posts With Word](https://github.com/fastai/fastpages#writing-blog-posts-with-microsoft-word)
+# Build for production
+npm run build
 
-- [(Optional) Preview Your Blog Locally](_fastpages_docs/DEVELOPMENT.md)
+# Preview the production build locally
+npm run preview
+```
 
-Do try out fastpages for your own blog.
+### Other useful commands
+
+```bash
+npm run format        # Format code with Prettier
+npm run format:check  # Check formatting without modifying
+npm run lint          # Lint with ESLint
+npm run sync          # Regenerate Astro TypeScript types
+```
+
+## 📝 Adding a New Post
+
+1. Create a new `.md` file in `src/data/blog/` (the filename becomes the URL slug):
+
+   ```
+   src/data/blog/my-new-post.md  →  /blog/posts/my-new-post
+   ```
+
+2. Add the required frontmatter at the top:
+
+   ```yaml
+   ---
+   title: "Your Post Title"
+   description: "A brief description for SEO and post excerpts"
+   pubDatetime: 2026-04-22T00:00:00Z
+   author: Mitesh Shah
+   tags:
+     - your-tag
+     - another-tag
+   featured: false
+   draft: false
+   ---
+
+   Your markdown content goes here...
+   ```
+
+### Frontmatter fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `title` | ✅ | Post title (h1) |
+| `description` | ✅ | Used in excerpts and meta tags |
+| `pubDatetime` | ✅ | Publish date in ISO 8601 format |
+| `author` | ❌ | Defaults to `Mitesh Shah` |
+| `tags` | ❌ | Array of tags; defaults to `["others"]` |
+| `featured` | ❌ | Show on homepage featured section (`false` by default) |
+| `draft` | ❌ | Set `true` to hide from production (`false` by default) |
+| `modDatetime` | ❌ | Last modified date (add when updating a post) |
+| `ogImage` | ❌ | Custom OG image (auto-generated if omitted) |
+| `canonicalURL` | ❌ | Canonical URL if cross-posted elsewhere |
+
+### Adding images
+
+- **Recommended**: Place images in `public/images/` and reference with absolute paths:
+
+  ```markdown
+  ![Alt text](/images/my-post/screenshot.png)
+  ```
+
+- For Astro-optimized images, place them in `src/assets/images/` and use relative paths:
+
+  ```markdown
+  ![Alt text](../../assets/images/screenshot.png)
+  ```
+
+### Using LaTeX equations
+
+Inline math with single dollar signs: `$E = mc^2$`
+
+Block equations with double dollar signs:
+
+```markdown
+$$
+\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
+$$
+```
+
+## 📁 Project Structure
+
+```
+/
+├── public/
+│   └── images/           # Static images (served as-is)
+├── src/
+│   ├── assets/           # Optimized assets (icons, images)
+│   ├── components/       # Astro/React components
+│   ├── data/blog/        # Blog posts (markdown)
+│   ├── layouts/          # Page layouts
+│   ├── pages/            # Route pages (index, about, tags, etc.)
+│   ├── styles/           # Global CSS (Tailwind + typography)
+│   ├── utils/            # Utility functions
+│   ├── config.ts         # Site configuration
+│   ├── constants.ts      # Social links and share links
+│   └── content.config.ts # Content collection schema
+├── astro.config.ts       # Astro configuration
+├── package.json
+└── tsconfig.json
+```
+
+## 🔄 Updating the Theme
+
+AstroPaper is a starter template, not an npm package — updates are applied manually. See the [AstroPaper update guide](https://astro-paper.pages.dev/posts/how-to-update-dependencies/) and the [changelog](https://github.com/satnaing/astro-paper/blob/main/CHANGELOG.md) for details.
+
+## 📜 License
+
+Licensed under the [MIT License](LICENSE).
