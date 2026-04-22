@@ -10,6 +10,32 @@ html[data-theme="light"] {
   --accent: #006cac;
   --muted: #e6e6e6;
   --border: #ece9e9;
+  --selection-bg: #ffec8f;
+
+  /* Gray scale */
+  --gray-100: #f5f5f5;
+  --gray-200: #e5e5e5;
+  --gray-300: #d4d4d4;
+  --gray-500: #737373;
+  --gray-700: #404040;
+
+  /* Semantic colors */
+  --info-bg: #eff6ff;
+  --info-border: #3b82f6;
+  --info-text: #1e40af;
+  --warning-bg: #fffbeb;
+  --warning-border: #f59e0b;
+  --warning-text: #92400e;
+  --success-bg: #f0fdf4;
+  --success-border: #22c55e;
+  --success-text: #166534;
+  --quote-bg: #f8f5ff;
+  --quote-border: #8b5cf6;
+  --quote-text: #5b21b6;
+
+  /* Code backgrounds */
+  --code-bg: #e0edfb;
+  --code-block-bg: #edf4fc;
 }
 
 html[data-theme="dark"] {
@@ -18,10 +44,37 @@ html[data-theme="dark"] {
   --accent: #ff6b01;
   --muted: #343f60;
   --border: #ab4b08;
+  --selection-bg: rgba(66, 66, 250, 0.25);
+
+  /* Gray scale */
+  --gray-100: #1e2538;
+  --gray-200: #2a3247;
+  --gray-300: #3d4763;
+  --gray-500: #8891a8;
+  --gray-700: #c1c7d4;
+
+  /* Semantic colors */
+  --info-bg: #0c1929;
+  --info-border: #2563eb;
+  --info-text: #93c5fd;
+  --warning-bg: #1a1506;
+  --warning-border: #d97706;
+  --warning-text: #fcd34d;
+  --success-bg: #071a0e;
+  --success-border: #16a34a;
+  --success-text: #86efac;
+  --quote-bg: #130f1e;
+  --quote-border: #7c3aed;
+  --quote-text: #c4b5fd;
+
+  /* Code backgrounds */
+  --code-bg: #1a2332;
+  --code-block-bg: #1a2332;
 }
 
 @theme inline {
-  --font-app: var(--font-google-sans-code);
+  --font-app: var(--font-nunito-sans);
+  --font-mono: var(--font-google-sans-code);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
@@ -37,9 +90,19 @@ html[data-theme="dark"] {
   }
   html {
     @apply overflow-y-scroll scroll-smooth;
+    scrollbar-gutter: stable;
   }
   body {
-    @apply flex min-h-svh flex-col bg-background font-app text-foreground selection:bg-accent/75 selection:text-background;
+    @apply flex min-h-svh flex-col bg-background font-app text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    selection-background: var(--selection-bg);
+    transition: background-color 350ms cubic-bezier(0.41, 0.1, 0.13, 1),
+                color 350ms cubic-bezier(0.41, 0.1, 0.13, 1);
+  }
+  body ::selection {
+    background-color: var(--selection-bg);
+    color: var(--foreground);
   }
   a,
   button {
@@ -49,6 +112,13 @@ html[data-theme="dark"] {
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+  /* Text wrapping for better typography */
+  h1 {
+    text-wrap: balance;
+  }
+  p, h2, h3, h4, h5, h6 {
+    text-wrap: pretty;
+  }
 }
 
 @utility max-w-app {
@@ -56,7 +126,7 @@ html[data-theme="dark"] {
 }
 
 @utility app-layout {
-  @apply mx-auto w-full max-w-app px-4;
+  @apply mx-auto w-full max-w-app px-4 sm:px-8;
 }
 
 .active-nav {
@@ -67,4 +137,108 @@ html[data-theme="dark"] {
 /* Anything that has been anchored to should have extra scroll margin */
 :target {
   scroll-margin-block: 1rem;
+}
+
+/* ===== Callout / Aside Boxes (inspired by joshwcomeau.com) ===== */
+.callout {
+  position: relative;
+  margin-block: 2rem 2.5rem;
+  margin-inline: -1rem;
+  padding: 1.5rem 1.25rem;
+  padding-left: calc(1.25rem + 3px);
+  border-radius: 0 6px 6px 0;
+  background-color: var(--callout-bg);
+  color: var(--foreground);
+  transition: background-color 350ms cubic-bezier(0.41, 0.1, 0.13, 1);
+}
+@media (min-width: 640px) {
+  .callout {
+    margin-inline: 0;
+    padding: 1.5rem 2rem;
+    padding-left: calc(2rem + 3px);
+    border-radius: 0 8px 8px 0;
+  }
+}
+
+/* Decorative left edge — the vertical colored line */
+.callout-edge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 3px;
+  transform: translateX(0);
+}
+.callout-edge-line {
+  width: 3px;
+  height: 100%;
+  background: var(--callout-border);
+  border-radius: 0 0 100px 100px;
+}
+
+/* Floating icon — positioned at top-left, overlapping the edge */
+.callout-icon-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(calc(-50% - 1.5px), -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--callout-border);
+  background-color: var(--background);
+  border-radius: 50%;
+  transition: background-color 350ms cubic-bezier(0.41, 0.1, 0.13, 1);
+}
+/* Hide the floating icon on narrow viewports where it would clip off-screen */
+@media (max-width: 640px) {
+  .callout-icon-wrapper {
+    display: none;
+  }
+}
+.callout-icon {
+  display: flex;
+  line-height: 1;
+}
+.callout-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* Title */
+.callout-title {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--foreground);
+}
+.callout p:last-child {
+  margin-bottom: 0;
+}
+
+/* Adjacent callouts get less gap */
+.callout + .callout {
+  margin-top: -0.5rem;
+}
+
+/* Variant colors */
+.callout-info {
+  --callout-bg: var(--info-bg);
+  --callout-border: var(--info-border);
+}
+.callout-warning {
+  --callout-bg: var(--warning-bg);
+  --callout-border: var(--warning-border);
+}
+.callout-success {
+  --callout-bg: var(--success-bg);
+  --callout-border: var(--success-border);
+}
+.callout-quote {
+  --callout-bg: var(--quote-bg);
+  --callout-border: var(--quote-border);
+  font-style: italic;
 }

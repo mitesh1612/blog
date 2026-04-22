@@ -4,7 +4,9 @@ import sitemap from "@astrojs/sitemap";
 import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
 import remarkMath from "remark-math";
+import remarkDirective from "remark-directive";
 import rehypeKatex from "rehype-katex";
+import remarkCallout from "./src/utils/remarkCallout";
 import {
   transformerNotationDiff,
   transformerNotationHighlight,
@@ -25,6 +27,8 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [
       remarkMath,
+      remarkDirective,
+      remarkCallout,
       remarkToc,
       [remarkCollapse, { test: "Table of contents" }],
     ],
@@ -68,6 +72,14 @@ export default defineConfig({
   experimental: {
     preserveScriptOrder: true,
     fonts: [
+      {
+        name: "Nunito Sans",
+        cssVariable: "--font-nunito-sans",
+        provider: fontProviders.google(),
+        fallbacks: ["sans-serif"],
+        weights: [300, 400, 500, 600, 700],
+        styles: ["normal", "italic"],
+      },
       {
         name: "Google Sans Code",
         cssVariable: "--font-google-sans-code",
