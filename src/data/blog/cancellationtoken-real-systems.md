@@ -3,8 +3,8 @@ title: "CancellationToken in Real Systems"
 description: "A practical follow-up to CancellationToken basics: request aborts, linked tokens, timeouts, background services, and the mistakes that show up in production backends"
 pubDatetime: 2026-04-23T00:00:00Z
 author: Mitesh Shah
-featured: false
-draft: true
+featured: true
+draft: false
 tags:
   - C#
   - asynchronous
@@ -20,13 +20,15 @@ This post is about that practical side of cancellation.
 
 This is not another introduction to `CancellationToken`, and I am not going to repeat every API on the type. Instead, this is a more practical follow-up on how cancellation behaves in real systems, especially in backend services and APIs where it can save resources, improve responsiveness, and occasionally expose some very avoidable mistakes.
 
-If you want the fundamentals first, I would recommend reading my earlier post before continuing. If you already know the basics, then let’s move on to where things start getting interesting.
+If you want the fundamentals first, I would recommend [reading my earlier post](/blog/posts/cancellation-tokens) before continuing. If you already know the basics, then let’s move on to where things start getting interesting.
 
 ## A quick refresher
 
 At its core, a `CancellationToken` is just a cooperative signal.
 
+:::quote
 That cooperative bit is the important part.
+:::
 
 It does **not** magically kill a running operation. It does not reach into your method, pull the plug, and heroically clean up your mess. It simply gives one part of the system a way to say, “Hey, if you are still doing work, it would be nice if you could stop now.” It is then up to the operation doing the work to observe that signal and respond appropriately.
 
@@ -42,24 +44,55 @@ One of the first places where cancellation becomes genuinely useful is request h
 
 In ASP.NET Core, a request can get aborted for a variety of reasons. The client may have disconnected, refreshed the page, navigated away, or simply timed out and given up. Once that happens, continuing expensive work on the server is usually not helping anyone. The caller is gone, the response is not going anywhere useful, and your application is now just burning CPU time, database connections, or downstream HTTP calls for no real benefit.
 
-That is where `HttpContext.RequestAborted` comes in.
+That is where `HttpContext.RequestAborted` comes in — a `CancellationToken` tied to the lifecycle of the request. If the request is aborted, this token gets cancelled.
+
+You can access it directly through `HttpContext` if you need to, but most of the time you do not have to. Both minimal APIs and controller actions support binding a `CancellationToken` parameter directly, and ASP.NET Core wires it to `HttpContext.RequestAborted` for you:
 
 ```cs
 app.MapGet("/reports/{id}", async (
     string id,
-    HttpContext httpContext,
+    CancellationToken cancellationToken,
     ReportsService reportsService) =>
 {
-    var report = await reportsService.GenerateAsync(id, httpContext.RequestAborted);
+    var report = await reportsService.GenerateAsync(id, cancellationToken);
     return Results.Ok(report);
 });
 ```
 
-This token represents the lifecycle of the request. If the request is aborted, the token is cancelled as well. From there, the important thing is not just that the endpoint *has* the token, but that it *passes it through* to the rest of the call chain.
+The same applies to controller actions:
+
+```cs
+[HttpGet("{id}")]
+public async Task<IActionResult> GetReport(
+    string id,
+    CancellationToken cancellationToken)
+{
+    var report = await _reportsService.GenerateAsync(id, cancellationToken);
+    return Ok(report);
+}
+```
+
+From there, the important thing is not just that the endpoint *has* the token, but that it *passes it through* to the rest of the call chain.
 
 A very common real-world example here is some kind of expensive aggregation or report generation endpoint. Maybe the request triggers a few downstream calls, a database query, and some in-memory processing before the final response is assembled. If the caller disconnects after two seconds, but your backend happily continues for another fifteen, you have just done a lot of work for absolutely no user-visible benefit.
 
 That is not just wasteful, it can become surprisingly expensive at scale.
+
+One thing that pairs well with request cancellation is a simple middleware that catches `OperationCanceledException` at the edge, so aborted requests do not end up in your error logs looking like server failures:
+
+```cs
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next(context);
+    }
+    catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
+    {
+        // Client disconnected — not an error, nothing to log.
+    }
+});
+```
 
 The nice thing is that ASP.NET Core already gives you the cancellation signal. The only hard part is respecting it consistently.
 
@@ -88,7 +121,7 @@ public async Task<ReportDto> GenerateAsync(string id, CancellationToken cancella
 
 This sounds obvious, but it is one of the easiest mistakes to make in a layered backend. You do the “correct” thing at the top by accepting a token, and then somewhere in the middle of the call chain someone forgets to pass it along. At that point, the rest of the code is effectively deaf to cancellation.
 
-Sometimes this happens because a method never accepted a token in the first place. Sometimes it happens because someone passes `CancellationToken.None` to a downstream call “just for now” and then nobody revisits it. Sometimes it happens because the token gets propagated to one dependency but not the other, which is even more fun to debug because now cancellation works only on alternate Tuesdays.
+Sometimes this happens because a method never accepted a token in the first place. Sometimes it happens because someone passes `CancellationToken.None` to a downstream call “just for now” and then nobody revisits it. Sometimes the library method accepts a `CancellationToken` as an optional parameter with a default value, so it never even occurs to you that you should be passing one in. And sometimes it happens because the token gets propagated to one dependency but not the other, which is even more fun to debug because now cancellation works only on alternate Tuesdays.
 
 In practice, forwarding the token consistently is often more important than manually checking `IsCancellationRequested` in a hundred places. If your downstream HTTP call, EF Core query, or storage SDK already accepts a token, let it do the right thing.
 
@@ -156,6 +189,32 @@ If the request was aborted, that is usually normal control flow. If your timeout
 
 So linked tokens are great for propagation, but when cancellation actually happens, it is still worth asking: *who asked for this?*
 
+In practice, that usually means checking the original tokens individually:
+
+```cs
+try
+{
+    await DoSomeWorkAsync(linkedCts.Token);
+}
+catch (OperationCanceledException)
+{
+    if (httpContext.RequestAborted.IsCancellationRequested)
+        _logger.LogInformation("Client disconnected");
+    else if (timeoutCts.Token.IsCancellationRequested)
+        _logger.LogWarning("Operation timed out");
+    else if (stoppingToken.IsCancellationRequested)
+        _logger.LogInformation("Host is shutting down");
+}
+```
+
+It is not the most glamorous pattern, but it gives you the clarity you need when reading logs later. Just keep in mind that this kind of inspection belongs at the boundary — the outer handler or middleware — not buried deep inside the call chain where swallowing the exception would quietly eat the cancellation signal.
+
+:::warning[Don't match on `OperationCanceledException.CancellationToken`]
+You might be tempted to use an exception filter like `catch (OperationCanceledException ex) when (ex.CancellationToken == httpContext.RequestAborted)` to figure out what caused the cancellation. This is unreliable when linked tokens are involved, because the token attached to the exception will be the *linked* token, not any of the original sources you actually care about. Checking `IsCancellationRequested` on the original tokens directly, like the snippet above, is the safer approach. This applies even outside linked-token scenarios — the token on the exception is not always the one you expect.
+
+If you really like using `when` (I get it), then you can try something like `catch (OperationCanceledException ex) when (httpContext.RequestAborted.IsCancellationRequested)`, which while does look weird, is still safer.
+:::
+
 ## Background services and graceful shutdown
 
 Cancellation matters just as much outside request/response code.
@@ -218,21 +277,31 @@ If you are halfway through some expensive read operation, cancellation is often 
 
 That is why I think it helps to treat cancellation as a design decision rather than just a plumbing exercise. Sometimes the right answer is to keep honoring cancellation all the way down. Sometimes the right answer is to stop honoring it after a certain point, finish a critical section, and only then return control.
 
-The earlier post covered the mechanics of cancellation. This is the practical boundary that shows up later: once an operation crosses the point where stopping would leave the system inconsistent or harder to recover, it may be better to finish cleanly than to stop immediately.
+This is the practical boundary that shows up later: once an operation crosses the point where stopping would leave the system inconsistent or harder to recover, it may be better to finish cleanly than to stop immediately.
 
-## Common mistakes I keep seeing
+## The usual suspects
 
-After you use `CancellationToken` for a while, a few mistakes show up again and again.
+After working with `CancellationToken` for a while, certain mistakes keep showing up. I have made most of these myself at some point, and I keep spotting them in code reviews. Here are the ones worth watching for.
 
-The first is the most basic one: accepting a token and then never actually using it. The method signature looks responsible, the calling code feels happy, and meanwhile the operation continues exactly as before.
+:::warning[Accepting a token and never using it]
+The method signature looks responsible, the calling code feels happy, and meanwhile the operation continues exactly as before. This is the most basic version of the problem and somehow also the easiest one to miss in review.
+:::
 
-The second is passing the token into the first method and nowhere else. This is the layered-backend version of doing cardio once and assuming you are now an athlete.
+:::warning[Passing the token into the first call and nowhere else]
+This is the layered-backend version of doing cardio once and assuming you are now an athlete. The entry point is cancellation-aware, but two layers down, nobody got the memo.
+:::
 
-Another common one is treating cancellation like an application error. A cancelled request is not always a failure. Sometimes it just means the caller went away, the timeout policy fired, or the host is shutting down. Logging every `OperationCanceledException` like the service has entered a dramatic state of collapse is a good way to create noisy telemetry and bad instincts.
+:::warning[Treating cancellation like an application error]
+A cancelled request is not always a failure. Sometimes it just means the caller went away, the timeout policy fired, or the host is shutting down. Logging every `OperationCanceledException` like the service has entered a dramatic state of collapse is a good way to create noisy telemetry and bad instincts.
+:::
 
-Then there is the timeout confusion: using timeout and cancellation interchangeably in code and in conversation. They are related, but they are not the same thing, and mixing them together makes debugging much more annoying than it needs to be.
+:::warning[Confusing timeouts with cancellation]
+Using timeout and cancellation interchangeably in code and in conversation. They are related, but they are not the same thing, and mixing them together makes debugging much more annoying than it needs to be.
+:::
 
-And finally, there is the classic misunderstanding at the heart of all this: forgetting that cancellation is cooperative. Passing a token into a method does not guarantee anything by itself. The code doing the work still has to observe it, propagate it, and respond sensibly.
+:::warning[Forgetting that cancellation is cooperative]
+Passing a token into a method does not guarantee anything by itself. The code doing the work still has to observe it, propagate it, and respond sensibly.
+:::
 
 In other words, `CancellationToken` is a very good tool, but it still expects the rest of us to behave like adults.
 
@@ -254,7 +323,7 @@ That is the pattern I have found most useful over time. Not a bag of isolated ca
 
 ## Closing thoughts
 
-`CancellationToken` is one of those features that looks small in demos and gets more interesting the longer you build real systems.
+`CancellationToken` is one of those features that looks small in reading and gets more interesting the longer you build real systems.
 
 On the surface, it is just a parameter and a signal. In practice, it affects responsiveness, resource usage, timeout behavior, shutdown quality, and how much pointless work your backend does after the caller has already moved on with their life.
 
@@ -269,6 +338,4 @@ And more importantly, it helps your code stop doing work for people who have alr
 - [My earlier post: A Deep Dive into C#'s CancellationToken](/blog/posts/cancellation-tokens/)
 - [Cancel async tasks after a period of time - C# | Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/cancel-async-tasks-after-a-period-of-time)
 - [Handle errors in ASP.NET Core APIs | Microsoft Learn](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/error-handling-api?view=aspnetcore-10.0)
-- [Introduction to resilient app development - .NET | Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/resilience/)
-- [Queue-Based Load Leveling pattern - Azure Architecture Center | Microsoft Learn](https://learn.microsoft.com/en-us/azure/architecture/patterns/queue-based-load-leveling)
-- [Durable Functions overview - Azure Durable | Microsoft Learn](https://learn.microsoft.com/en-us/azure/azure-functions/durable-functions/durable-functions-overview)
+- [Request Cancellation in ASP.NET Core](https://www.c-sharpcorner.com/article/using-cancellationtoken-in-web-api-a-complete-guide2/)

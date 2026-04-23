@@ -3,7 +3,7 @@ title: "Blog Update 2"
 description: "The blog gets a fresh new look, powered by Astro and the AstroPaper theme"
 pubDatetime: 2026-04-22T00:00:00Z
 author: Mitesh Shah
-featured: true
+featured: false
 draft: false
 tags:
   - astro
