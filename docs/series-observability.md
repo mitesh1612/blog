@@ -12,12 +12,15 @@ This series covers observability the way it actually matters in backend systems 
 
 1. **Your Logs Are Lying to You**
    Structured logging done right, what to log, what to stop logging, and why `Console.WriteLine("here")` in prod is a cry for help.
+   *OTel mention:* Brief nod to OpenTelemetry as the emerging standard for log correlation, but keep Serilog as the primary tool since it's more mature in the C# ecosystem.
 
 2. **Metrics: Because "It Feels Slow" Isn't an SLO**
    RED/USE methods, picking metrics that actually matter, and the art of not measuring everything just because you can.
+   *OTel section:* `System.Diagnostics.Metrics` + OpenTelemetry exporter as the modern .NET approach to custom metrics. Show practical examples here — this is where OTel starts earning its keep.
 
 3. **Traces: Following a Request Through the Haunted House**
    Distributed tracing without the PhD, correlation IDs, span design, and why your trace waterfall looks like modern art.
+   *OTel section:* The biggest OTel payoff — `ActivitySource`, `Activity`, span propagation, and how the three pillars (logs, metrics, traces) converge through OpenTelemetry. Give it a proper section. Include a callout tying the OTel thread across the series: "If you've been following along, you've now seen OpenTelemetry show up in logs, metrics, and traces. That's the point — it's not a separate thing to learn, it's the glue."
 
 4. **Alerts That Don't Make You Hate Your Phone**
    Alert fatigue, symptom vs cause alerting, runbooks that aren't fiction, and on-call that doesn't ruin weekends.
@@ -33,3 +36,4 @@ This series covers observability the way it actually matters in backend systems 
 - All code examples are in C# / ASP.NET Core
 - Each chapter is self-contained but builds on the previous
 - The series prioritises practical patterns over tool-specific guides
+- OpenTelemetry is woven into chapters 1–3 as a recurring thread rather than a standalone chapter — it's the "how", not the "what"
