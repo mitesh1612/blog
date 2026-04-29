@@ -3,7 +3,7 @@ title: "CancellationToken in Real Systems"
 description: "A practical follow-up to CancellationToken basics: request aborts, linked tokens, timeouts, background services, and the mistakes that show up in production backends"
 pubDatetime: 2026-04-23T00:00:00Z
 author: Mitesh Shah
-featured: true
+featured: false
 draft: false
 tags:
   - C#
