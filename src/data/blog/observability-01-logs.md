@@ -86,6 +86,8 @@ _logger.LogInformation(
 
 The difference looks small, but it is enormous. With structured logging, each log entry becomes a record with named, queryable fields. `OrderId`, `CustomerId`, and `Amount` are now first-class properties you can filter, aggregate, and correlate.
 
+![Bad logs compared with useful structured logs](../../assets/images/BadVsUsefulLogs.png)
+
 This is where the difference shows up during an incident. With the interpolated string version, you end up doing something like this:
 
 ```kusto
@@ -304,6 +306,8 @@ EF Core at `Debug` level will log every single SQL query, including parameter va
 Individual log entries are useful. Correlated log entries are powerful.
 
 When a request comes in and touches three services, hits a database, publishes a message, and returns a response, you want to be able to pull one string and see everything that happened as part of that operation.
+
+![Correlation ID flowing across an HTTP request, API, service, queue, and background worker](../../assets/images/CorrelationAcrossBoundaries.png)
 
 In ASP.NET Core, you get some of this for free through `Activity` and the built-in trace/span ID propagation. But in practice, you usually want to enrich your logs with a few more things:
 
