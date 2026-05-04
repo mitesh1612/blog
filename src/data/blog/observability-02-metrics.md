@@ -315,17 +315,51 @@ ASP.NET Core and the .NET runtime expose a bunch of useful metrics out of the bo
 
 Do not start by inventing twenty custom metrics. Start with what the platform already gives you, add RED metrics for your service, then add business metrics for the things your team is actually responsible for. Observability is not a sticker collection.
 
-## What NOT to measure
+## How to mess up metrics (a field guide)
 
-Metrics have a cost. Every unique time series consumes memory in your metrics backend, and cardinality explosions are the number one way to take down a Prometheus instance.
+Metrics seem simple. Name a number, record it, graph it. And yet, teams find creative ways to make them useless, expensive, or actively misleading. Here is a taxonomy of the most popular mistakes, presented in the spirit of helping you avoid them — or at least recognise them faster when you inevitably make them anyway.
 
-- **Don't add per-user or per-entity dimensions.** If you need per-user latency data, that is a trace or a log, not a metric.
-- **Don't duplicate platform metrics.** ASP.NET Core already emits `http.server.request.duration`. Don't create your own unless you need something the built-in doesn't provide.
-- **Don't create metrics you will never alert on or dashboard.** Every metric is a promise to maintain it. If nobody will ever look at it, it is just entropy with a name.
-- **Don't measure internal implementation details.** "Number of times we entered the retry loop" is probably not worth a metric. "Number of retries per dependency" is.
-- **Don't worship vanity metrics.** "Total registered users" looks great on a dashboard and tells you almost nothing about whether the system is healthy right now. It is a business report wearing an incident-response costume.
+### The cardinality bomb
+
+We touched on this earlier with the cardinality warning, but it deserves a proper burial here because it is the single most common way to set your metrics backend on fire.
+
+Every unique combination of label values creates a separate time series. In staging, you have 10 users hitting 5 endpoints. That is 50 time series. Manageable. In production, you have 100,000 users hitting 200 endpoints across 3 regions and 5 status codes. That is not a metrics system anymore — it is a distributed denial-of-service attack you are running against yourself.
+
+The insidious part: it works fine for weeks. Then one morning your Prometheus instance OOMs, your Grafana dashboards timeout, and someone discovers that a well-meaning engineer added `correlationId` as a metric tag three sprints ago because "it might be useful for debugging." It was not useful. It was arson.
+
+Rules that will save you:
+
+- If a label value is unique per request, it belongs in a trace or a log. Period.
+- If a label can have more than ~200 distinct values, think very hard before adding it.
+- If you are not sure, leave it out. You can always add a label later. Removing one after your TSDB has ingested three weeks of high-cardinality data is a different kind of fun.
+
+### Measuring the wrong things
+
+Not every number deserves to be a metric. Some signs you are measuring the wrong things:
+
+**Duplicating what the platform already gives you.** ASP.NET Core emits `http.server.request.duration` out of the box. If you are also manually timing every controller action and recording it to a custom histogram, you now have two sources of truth that will inevitably disagree. Pick one. Preferably the one you did not write.
+
+**Vanity metrics.** "Total registered users" looks impressive on a big-screen dashboard in the office lobby. It tells you nothing about whether the system is healthy *right now*. It goes up every day regardless of whether anything is working. It is a business report wearing an incident-response costume.
+
+**"Just in case" metrics.** Someone adds a counter for every internal method call because "what if we need it someday?" You now have 300 time series that nobody looks at, costing real money in storage, and making the metrics catalog so noisy that finding the useful ones requires its own search engine. Every metric is a maintenance promise. If nobody will ever alert on it, dashboard it, or use it to make a decision — it is not observability. It is hoarding.
+
+**Internal implementation details.** "Number of times we entered the retry loop" is trivia. "Number of retries per dependency" is actionable. The difference is whether the metric helps you understand system behaviour from the outside, or whether it is just narrating the code to itself.
 
 A good metric helps you detect, explain, or decide something. If it does none of those, remove it before it becomes another graph nobody opens but everyone is afraid to delete.
+
+### Metrics that lie to you
+
+This is the sneaky one. You picked the right things to measure, you kept cardinality under control, and your dashboards look professional. But the numbers are still lying. Metrics can mislead you just as effectively as the optimistic logs we talked about in Part 1.
+
+**Summing averages across instances.** You have five instances of your service. Each reports an average latency. You average the averages and get a number that is mathematically meaningless. Averages do not compose — if one instance handled 10,000 requests at 50ms and another handled 100 requests at 5 seconds, the "average of averages" will tell you things are fine. They are not. Use histograms and aggregate the buckets, or compute percentiles from merged distributions.
+
+**Stale gauges from dead pods.** A pod dies. Its last reported gauge value — say, queue depth of 47 — sits in your TSDB forever (or until the series expires). Your dashboard shows a queue depth of 47 for a thing that no longer exists. You investigate a phantom backlog, spend twenty minutes confirming the pod is gone, and then quietly question your career choices. Use staleness markers or configure appropriate series expiration.
+
+**Counter resets looking like traffic drops.** Counters reset to zero when a process restarts. If your monitoring tool does not handle resets correctly (Prometheus does, many custom scrapers do not), a deploy looks like traffic dropped to zero for a moment. This is especially fun when combined with alerting — "we got paged because we deployed" is a rite of passage nobody should have to repeat.
+
+**Scrape intervals hiding spikes.** If you scrape every 60 seconds but your CPU hits 100% for 5-second bursts between scrapes, your utilisation graph will show a gentle 15% and you will never know why requests occasionally timeout. This is [Brendan Gregg's burst-averaging problem](https://www.brendangregg.com/usemethod.html) — the resolution of your metrics determines what you can see. If your SLO cares about sub-second spikes, your metrics need to be granular enough to catch them.
+
+**Measuring at the wrong boundary.** Recording "order created" before the database transaction commits is the metrics equivalent of celebrating a goal before the ball crosses the line. If the transaction rolls back, your counter says one thing happened and reality says another. Same pattern as the optimistic log from Part 1 — measure *after* the thing actually succeeded, not when you are feeling confident about it.
 
 ## Wiring up OpenTelemetry metrics export
 
@@ -435,27 +469,6 @@ For an order creation endpoint, a reasonable first pass might be:
 That is much better than "orders should be fast," which is not an objective. It is a wish wearing a blazer.
 
 You do not need SLOs for every metric. Start with one or two for your most critical endpoints and see how it changes the way your team makes decisions.
-
-## A skeleton for metrics in a new service
-
-If you are starting from scratch, the practical setup looks like this:
-
-```cs file="Program.cs"
-builder.Services.AddSingleton<ServiceMetrics>();
-
-builder.Services.AddOpenTelemetry()
-    .WithMetrics(metrics =>
-    {
-        metrics
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddRuntimeInstrumentation()
-            .AddMeter(ServiceMetrics.MeterName)
-            .AddOtlpExporter();
-    });
-```
-
-Then keep `ServiceMetrics` small: RED metrics for your service, dependency health, and a few business counters that actually matter. Everything else needs to justify its existence like it is asking for production database access.
 
 ## Wrapping up
 
