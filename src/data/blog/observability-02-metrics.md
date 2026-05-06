@@ -1,5 +1,5 @@
 ---
-title: "Metrics: Because 'It Feels Slow' Isn't an SLO: Practical .NET Metrics for Backend Engineers"
+title: "Metrics: Because 'It Feels Slow' Isn't an SLO: Practical Metrics for Backend Engineers"
 description: "RED and USE methods, picking metrics that actually matter, custom metrics in .NET with System.Diagnostics.Metrics and OpenTelemetry, and the art of not measuring everything just because you can"
 pubDatetime: 2026-05-05T00:00:00Z
 author: Mitesh Shah
