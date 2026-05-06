@@ -1,5 +1,5 @@
 ---
-title: "Metrics: Because 'It Feels Slow' Isn't an SLO"
+title: "Metrics: Because 'It Feels Slow' Isn't an SLO: Practical .NET Metrics for Backend Engineers"
 description: "RED and USE methods, picking metrics that actually matter, custom metrics in .NET with System.Diagnostics.Metrics and OpenTelemetry, and the art of not measuring everything just because you can"
 pubDatetime: 2026-05-05T00:00:00Z
 author: Mitesh Shah
@@ -64,6 +64,8 @@ Most metrics systems give you three fundamental instrument types:
 | **Histogram** | Records a distribution of values. Gives you percentiles. | Request duration, response size, batch processing time |
 
 Counters are usually consumed as rates. "Requests per second" is more useful than "we have served 14 million requests since the process started." Gauges are snapshots. Histograms are where the interesting stuff lives, because averages lie and percentiles don't (as much).
+
+![Counter, observable gauge, and histogram mental models](../../assets/images/MetricInstruments.png)
 
 :::info[Counter vs gauge mental model]
 A counter records events. A gauge records current state.
