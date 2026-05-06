@@ -1,6 +1,6 @@
 ---
 title: "Your Logs Are Lying to You: Practical Structured Logging for Backend Engineers"
-description: "Structured logging done right for backend engineers — what to log, what to stop logging, and why your current logs are probably making incidents harder, not easier"
+description: "Structured logging done right for backend engineers - what to log, what to stop logging, and why your current logs are probably making incidents harder, not easier"
 pubDatetime: 2026-04-29T00:00:00Z
 author: Mitesh Shah
 featured: true
@@ -367,14 +367,14 @@ There is a much deeper conversation hiding here around OpenTelemetry, `Activity`
 
 Log levels seem straightforward, but in practice most codebases use them inconsistently. Here is how I think about them:
 
-| Level | When to use it |
-|-------|---------------|
-| `Trace` | You are debugging something specific and will turn this off after |
-| `Debug` | Useful during development, not in production |
-| `Information` | Something happened that is expected and worth recording |
-| `Warning` | Something unusual happened that might need attention, but the operation continued |
-| `Error` | Something failed and the operation could not complete |
-| `Critical` | The application itself is in trouble — cannot connect to the database, out of memory, startup failures |
+| Level         | When to use it                                                                                         |
+| ------------- | ------------------------------------------------------------------------------------------------------ |
+| `Trace`       | You are debugging something specific and will turn this off after                                      |
+| `Debug`       | Useful during development, not in production                                                           |
+| `Information` | Something happened that is expected and worth recording                                                |
+| `Warning`     | Something unusual happened that might need attention, but the operation continued                      |
+| `Error`       | Something failed and the operation could not complete                                                  |
+| `Critical`    | The application itself is in trouble — cannot connect to the database, out of memory, startup failures |
 
 The most common mistakes:
 
@@ -469,6 +469,17 @@ Get these basics right, and your logs become a tool you actually reach for durin
 
 In the next post, we will talk about **metrics** — because logs can tell you what happened to one request, but they are a terrible way to understand how the whole system is behaving. Also, "it feels slow" is not an SLO, no matter how confidently someone says it in standup.
 
+:::info[Observability series]
+This post is part of **Observability for Backend Engineers Who Don't Want Dashboard Theater** - a series about production visibility that tries very hard not to become a collection of expensive screenshots.
+
+| Part | Post                                                                                  |
+| ---- | ------------------------------------------------------------------------------------- |
+| 1    | **Your Logs Are Lying to You** ← you are here                                         |
+| 2    | [Metrics: Because "It Feels Slow" Isn't an SLO](/blog/posts/observability-02-metrics) |
+| 3    | Traces: Following a Request Through the Haunted House _(coming next)_                 |
+
+:::
+
 ---
 
-*This is Part 1 of the [Observability for Backend Engineers](/blog/tags/observability-for-backend-engineers) series.*
+_This is Part 1 of the [Observability for Backend Engineers](/blog/tags/observability-for-backend-engineers) series._
