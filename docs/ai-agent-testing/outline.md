@@ -1,11 +1,10 @@
 # Blog Post Outline: How to Test an AI Agent Before Production
 
-## Working Title Options
-1. **"How to Test an AI Agent Before Production"** (SEO primary — direct, searchable)
-2. **"Testing AI Agents: Because 'It Works on My Prompt' Is Not a Test Strategy"** (personality — matches existing title style)
-3. **"How to Test an AI Agent Before It Embarrasses You in Production"** (middle ground)
+## Title
 
-> Recommendation: Use option 2 or 3 as the display title, with "how to test an AI agent before production" as the SEO-optimized slug and description target.
+**"Testing AI Agents: Because 'It Works on My Prompt' Is Not a Test Strategy"**
+
+Slug: `testing-ai-agents` — SEO description targets "how to test an AI agent before production."
 
 ---
 
@@ -29,17 +28,35 @@ tags:
 
 ---
 
+## Decisions (locked in)
+
+- **Title**: "It Works on My Prompt" — funnier, matches existing style
+- **Format**: Standalone pillar post. Closing note invites readers to request deeper follow-ups on specific sections.
+- **Code split**: C# for unit testing patterns and MEAI Evaluation; Python for DeepEval and PyRIT. Show the best tool for each job.
+- **Voice**: Mix of first person ("When we shipped...", "In our system...") and general ("Teams often find..."). Sprinkle personal experience, don't make it a resume.
+- **Experience to weave in** (throughout, not in one dump):
+  - Used Microsoft.Extensions.AI.Evaluation in production for shipping AI features
+  - Mix of built-in evaluators and custom evaluators (custom prompts with scoring strategy)
+  - CI evals to catch prompt drift causing quality regressions
+  - Production evals pushing metrics and traces → alerting when quality degrades
+  - Tracing for drilling into specifics when something goes wrong
+  - User data handling: redaction and appropriate treatment; opt-in for deeper investigation
+  - Thorough red teaming and evaluation before production launch — hate content, invalid generation, prompt injection, all attack vectors
+  - Frame as: "here's a process you should follow before shipping" (not a specific company process, but a responsible engineering practice)
+
+---
+
 ## Post Structure
 
 ### Opening (~300 words)
 
-**Hook**: Start with the reality of how most teams "test" their AI agents today — vibe checking in a playground, someone types five prompts, says "looks good," and ships. Draw the parallel to how backend engineers would never ship an API endpoint tested with "I curled it five times and it seemed fine." Yet that's exactly what's happening with AI agents.
+**Hook**: Start with the reality of how most teams "test" their AI agents today - vibe checking in a playground, someone types five prompts, says "looks good," and ships. Draw the parallel to how backend engineers would never ship an API endpoint tested with "I curled it five times and it seemed fine." Yet that's exactly what's happening with AI agents.
 
-**The core problem**: Traditional testing assumes determinism. AI agents violate that assumption at every level — non-deterministic outputs, no single right answer, real side effects (tool calls), emergent behavior from composition, multi-turn state. You can't just `Assert.Equal(expected, actual)`.
+**The core problem**: Traditional testing assumes determinism. AI agents violate that assumption at every level - non-deterministic outputs, no single right answer, real side effects (tool calls), emergent behavior from composition, multi-turn state. You can't just `Assert.Equal(expected, actual)`.
 
 **What this post covers**: A practical framework for testing AI agents, from fast deterministic checks to LLM-based evaluation to adversarial probing. With code. In languages you actually use.
 
-**Tone note**: Set the voice early — "I've shipped AI features that broke in production in ways I didn't predict. This is what I learned." Establishes credibility without being preachy.
+**Tone note**: Set the voice early — "I've shipped AI features to production. Some of what I learned came from the docs. Most of it came from things going wrong." Establishes credibility without making it about you.
 
 ---
 
@@ -74,13 +91,13 @@ tags:
 - "You'd be amazed how many production issues are 'the agent returned malformed JSON.'"
 
 **Level 2: Model-Based Evaluation (LLM-as-Judge)**
-- Using an LLM or human reviewer to judge subjective quality — helpfulness, correctness, tone, safety.
+- Using an LLM or human reviewer to judge subjective quality - helpfulness, correctness, tone, safety.
 - Run on a regular cadence (daily/weekly), before releases, after significant changes.
 - "Don't use a $0.03 API call to check what a $0.00 string match could verify."
 
 **Level 3: Live Experiments (A/B Testing)**
 - Production traffic experiments. Expensive.
-- Brief mention only — most readers aren't here yet.
+- Brief mention only - most readers aren't here yet.
 - "A/B testing without Level 1 and 2 is just shipping bugs to 50% of your users."
 
 **Visual**: Simple table or diagram showing the three levels with cost, speed, and signal characteristics.
@@ -100,7 +117,7 @@ tags:
 2. **Tool Call Verification**
    - Assert correct tool was called with correct arguments
    - Code example: Mocking IChatClient, verifying function call name and args
-   - This is the one that matters most for agent safety — wrong tool call = real-world consequences
+   - This is the one that matters most for agent safety - wrong tool call = real-world consequences
 
 3. **Classification Boundary**
    - Assert output falls within expected categories
@@ -134,24 +151,24 @@ tags:
 - Diagram or simple flow illustration
 
 **Making it reliable**:
-1. **Use a stronger model as judge** — weaker model judging stronger model = unreliable
+1. **Use a stronger model as judge** - weaker model judging stronger model = unreliable
 2. **Explicit rubrics, not vague criteria**
    - Bad: "Is this response good?"
    - Good: Detailed 1-5 scale with specific criteria for each score
    - Code example showing a rubric definition
-3. **Ask the judge to reason before scoring** — chain-of-thought grading is significantly more reliable
-4. **Validate against human judgment** — grade 50-100 outputs with humans, calculate agreement. If judge disagrees >20%, rubric needs work.
+3. **Ask the judge to reason before scoring** - chain-of-thought grading is significantly more reliable
+4. **Validate against human judgment** - grade 50-100 outputs with humans, calculate agreement. If judge disagrees >20%, rubric needs work.
 
-**Tooling — what to use**:
-- **Python**: DeepEval's G-Eval (custom criteria evaluation) — show a brief code example
-- **.NET**: Microsoft.Extensions.AI.Evaluation.Quality — RelevanceEvaluator, CoherenceEvaluator, GroundednessEvaluator, etc. — show a brief code example
+**Tooling - what to use**:
+- **Python**: DeepEval's G-Eval (custom criteria evaluation) - show a brief code example
+- **.NET**: Microsoft.Extensions.AI.Evaluation.Quality - RelevanceEvaluator, CoherenceEvaluator, GroundednessEvaluator, etc. - show a brief code example
 - Both are LLM-as-judge under the hood, both let you define custom criteria
 
 **Callout**: "LLM judges are not perfect. They have biases (verbosity bias, position bias). But they scale in ways human review cannot, and for most teams, an imperfect automated judge running on every PR beats a perfect human review running never."
 
 ---
 
-### Section 5: Testing Agent Behavior — Tools, Routing, and Orchestration (~700 words) ⭐ DEEP TREATMENT
+### Section 5: Testing Agent Behavior - Tools, Routing, and Orchestration (~700 words) ⭐ DEEP TREATMENT
 
 **Core argument**: An agent that generates great text but calls the wrong API is worse than one that generates mediocre text but does the right thing. Tool testing is where agent testing diverges most from vanilla LLM testing.
 
@@ -162,13 +179,13 @@ tags:
 - **Error recovery**: When a tool fails or returns garbage, does the agent handle it gracefully?
 - **Multi-step orchestration**: For agents that chain tools, is the sequence correct?
 
-**Practical approach — the "expected trajectory" pattern**:
+**Practical approach - the "expected trajectory" pattern**:
 - Define expected tool call sequences for common scenarios
 - Assert the agent's actual trajectory matches (with some flexibility for ordering where order doesn't matter)
 - Code example: testing a tool-use agent's trajectory
 
 **Tooling**:
-- **Python**: DeepEval's ToolCorrectnessMetric — evaluates tool selection with configurable strictness. Brief code example.
+- **Python**: DeepEval's ToolCorrectnessMetric - evaluates tool selection with configurable strictness. Brief code example.
 - **.NET**: Mock-based testing with IChatClient + function calling. Show how to capture and assert tool calls.
 - Mention AgentEval NuGet for MAF-specific tool validation.
 
@@ -178,7 +195,7 @@ tags:
 
 ### Section 6: Building a Test Dataset That Doesn't Lie to You (~400 words)
 
-**Compact treatment** — key points, no deep dive.
+**Compact treatment** - key points, no deep dive.
 
 - Start small and manual: your golden examples from Section 1. Aim for 20-50 hand-crafted cases covering happy paths, edge cases, adversarial inputs, and failure scenarios.
 - Grow from production: once live, flag real failures, add to test dataset with expected correct behavior. Virtuous cycle.
@@ -189,7 +206,7 @@ tags:
 
 ---
 
-### Section 7: Red Teaming — Finding the Failure Modes You Didn't Imagine (~600 words) ⭐ DEEP TREATMENT
+### Section 7: Red Teaming - Finding the Failure Modes You Didn't Imagine (~600 words) ⭐ DEEP TREATMENT
 
 **Core argument**: Your agent will be used by people who do not share your assumptions about how it should be used. Red teaming is how you find out what happens.
 
@@ -208,7 +225,7 @@ tags:
   - Brief code/CLI example
   - Targets any endpoint (OpenAI, Azure, custom HTTP)
 
-**Mention OWASP LLM Top 10**: Don't enumerate all 10 — link to it and call out the 3-4 most relevant for agents (prompt injection, insecure output handling, excessive agency, sensitive information disclosure).
+**Mention OWASP LLM Top 10**: Don't enumerate all 10 - link to it and call out the 3-4 most relevant for agents (prompt injection, insecure output handling, excessive agency, sensitive information disclosure).
 
 **Callout**: "Red teaming is not a one-time activity. Every prompt change, every new tool, every model upgrade can introduce new attack surfaces. Build it into your release process."
 
@@ -216,12 +233,12 @@ tags:
 
 ### Section 8: Putting It in CI/CD (~400 words)
 
-**Compact treatment** — practical advice, not a deep dive.
+**Compact treatment** - practical advice, not a deep dive.
 
 - **Level 1 tests (assertions)**: Run on every PR. Fast. Gate merges on these.
 - **Level 2 tests (LLM-as-judge)**: Run on a schedule (nightly) or before releases. More expensive, slower, but catch quality regressions.
 - **Red team scans**: Run weekly or before major releases. Flag regressions in safety posture.
-- Response caching for CI: Microsoft.Extensions.AI.Evaluation.Reporting has a response caching feature — cached LLM responses for repeat runs so your CI bill doesn't become your biggest cloud expense. Mention this as a useful pattern regardless of framework.
+- Response caching for CI: Microsoft.Extensions.AI.Evaluation.Reporting has a response caching feature - cached LLM responses for repeat runs so your CI bill doesn't become your biggest cloud expense. Mention this as a useful pattern regardless of framework.
 - The practical challenge: LLM-based tests are slow and non-deterministic. Set reasonable thresholds, expect some flakiness, use retry logic where appropriate.
 
 **One strong opinion**: "If your AI agent doesn't have automated tests in CI, it is not tested. It is vibes-checked. Those are different things."
@@ -230,7 +247,7 @@ tags:
 
 ### Section 9: What to Look For in an Evaluation Framework (~300 words)
 
-**Compact treatment** — since we're not doing an exhaustive tooling comparison (it'll go stale), instead describe what capabilities to look for.
+**Compact treatment** - since we're not doing an exhaustive tooling comparison (it'll go stale), instead describe what capabilities to look for.
 
 **Checklist of capabilities**:
 - LLM-as-judge with customizable rubrics
@@ -266,6 +283,8 @@ tags:
 
 **Closing thought**: Something about how testing AI agents is genuinely harder than testing traditional software, but the principles are the same ones backend engineers already know — define expected behavior, automate verification, make the build fail when things break. The tooling is catching up. The mindset doesn't need to.
 
+**Follow-up invite**: "This post covers the full landscape. If you want a deeper dive on any specific section — unit testing patterns, red teaming playbooks, production eval pipelines — let me know and I'll write it up."
+
 ---
 
 ## Estimated Word Count
@@ -291,8 +310,7 @@ This is on the longer side of our 4000-5000 target, but the code examples will t
 
 ## Open Questions for Mitesh
 
-1. **Title preference**: Option 2 ("It Works on My Prompt") or Option 3 ("Embarrasses You")? Or something else?
-2. **Code examples**: Lean more C# or 50/50 with Python? Current plan shows C# for unit testing / MEAI Evaluation, Python for DeepEval / PyRIT.
-3. **Do you want to reference your own experience shipping AI features?** First person ("When I shipped...") or more general ("Teams often find...")?
-4. **Series tag or standalone?** This could be tagged standalone, or as part of a broader "AI for Backend Engineers" series if you plan the "Building AI Features Like a Backend Engineer" post too.
-5. **Any specific failure modes from your own work** you'd be comfortable sharing? Real war stories make these posts land harder.
+1. **Red teaming section**: How specific can we get about the types of attacks you tested for? The outline mentions hate content, prompt injection, invalid generation — are there other categories worth calling out?
+2. **Custom evaluators**: Can we show a simplified version of a custom evaluator pattern (custom prompt + scoring)? Even pseudocode would make that section much stronger.
+3. **Production eval → alerting flow**: How much detail on the metrics/traces → alerting pipeline? A high-level "we push eval scores as metrics, set thresholds, get paged when quality drops" or more specific?
+4. **Any particularly satisfying catch?** Like a time CI evals caught a prompt drift that would've shipped bad quality? One concrete anecdote makes the CI section 10x more compelling.
