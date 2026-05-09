@@ -317,4 +317,24 @@ This is on the longer side of our 4000-5000 target, but the code examples will t
 
 ## Still Needed
 
-- [ ] Custom evaluation prompt from Mitesh (for the custom evaluator section)
+- [ ] ~~Custom evaluation prompt from Mitesh~~ **DONE** — Read from source. Will derive patterns, NOT include verbatim.
+
+## Custom Evaluator Patterns (extracted from real production evaluators)
+
+**Key patterns to showcase in the blog (genericized, no confidential content):**
+
+1. **Weighted evaluation criteria**: Each aspect gets a percentage weight (e.g., Completeness 25%, Correctness 25%, Consistency 25%, Actionability 15%, Metadata Quality 10%). Some things matter more than others.
+
+2. **Explicit 1-5 scoring rubric**: Each score level has a specific description. 5 = "Comprehensive, correct, actionable. An engineer could directly use this." 1 = "Mostly incorrect or unusable."
+
+3. **Hard-fail caps**: If the output has a fundamental violation (e.g., invalid JSON, hallucinated references, a critical logical error), the score is CAPPED at a maximum regardless of other criteria. Prevents "scored 4.2 but fundamentally broken" situations. This is the killer pattern most teams miss.
+
+4. **Feature-specific evaluators**: One evaluator per output component (correlations, parameters, naming) + one overall quality evaluator. All run on every invocation. This gives granular signal — you know WHICH aspect degraded.
+
+5. **Reference-based in CI, reference-free in production**: CI evals run against a golden dataset (can compare to known-good outputs). Production evals are fully reference-free (obviously no golden answer for real user data). Different eval modes for different contexts.
+
+6. **Discrimination testing**: Evaluating not just "did it find the right things" but "did it correctly NOT flag the wrong things." Over-detection is as much a bug as under-detection.
+
+7. **Domain context in the prompt**: The evaluator prompt explains WHAT the output represents and WHY it matters, so the judge model has enough context to evaluate intelligently.
+
+**Blog approach**: Show a generic custom evaluator (different domain — e.g., a customer support agent) using the same structural patterns. Weighted criteria, scoring rubric, hard-fail caps, feature-specific + overall.
