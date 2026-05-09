@@ -308,9 +308,13 @@ This is on the longer side of our 4000-5000 target, but the code examples will t
 
 ---
 
-## Open Questions for Mitesh
+## Resolved Questions
 
-1. **Red teaming section**: How specific can we get about the types of attacks you tested for? The outline mentions hate content, prompt injection, invalid generation — are there other categories worth calling out?
-2. **Custom evaluators**: Can we show a simplified version of a custom evaluator pattern (custom prompt + scoring)? Even pseudocode would make that section much stronger.
-3. **Production eval → alerting flow**: How much detail on the metrics/traces → alerting pipeline? A high-level "we push eval scores as metrics, set thresholds, get paged when quality drops" or more specific?
-4. **Any particularly satisfying catch?** Like a time CI evals caught a prompt drift that would've shipped bad quality? One concrete anecdote makes the CI section 10x more compelling.
+1. **Red teaming categories tested**: Harmful content, UPIA (User Prompt Injection Attack), XPIA (Cross-domain Prompt Injection Attack), Ungrounded content, Copyright (system generates content). All covered before shipping.
+2. **Custom evaluators**: Mitesh to share a real custom evaluation prompt. Pattern: judge evaluates aspects of output, assigns scores with weighted importance (some things matter more, some blunders are worse). Will show a representative version in the post.
+3. **Production eval → alerting**: Push eval scores as metrics, set thresholds, alert when quality drops. Use traces to debug further when alerts fire. If users opt in, can inspect their data to diagnose issues.
+4. **CI catch story**: No dramatic catch — scores have been stable because prompts haven't been revised yet. Spin this positively: "The boring outcome is the successful one. Evals keeping things stable is the point."
+
+## Still Needed
+
+- [ ] Custom evaluation prompt from Mitesh (for the custom evaluator section)
