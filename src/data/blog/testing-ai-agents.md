@@ -1,7 +1,7 @@
 ---
 title: "Testing AI Agents: Because 'It Works on My Prompt' Is Not a Test Strategy"
 description: "A practical guide to testing AI agents before production - unit tests for non-deterministic systems, LLM-as-judge evaluation, tool call verification, red teaming, and the tooling that actually exists for .NET and Python"
-pubDatetime: 2026-05-12T00:00:00Z
+pubDatetime: 2026-05-26T00:00:00Z
 author: Mitesh Shah
 featured: true
 draft: false
@@ -82,7 +82,7 @@ A/B testing without Level 1 and Level 2 is just shipping bugs to 50% of your use
 
 ## Unit testing non-deterministic systems
 
-The trick to unit-testing AI agents is: test the **properties** of outputs, not the exact outputs. This is where most backend engineers feel at home, and the patterns map surprisingly well to what you already know.
+The trick to unit-testing AI agents is: test the **properties** of outputs, not the exact outputs. This is where most engineers will feel at home, and the patterns map surprisingly well to what you already know.
 
 ### Schema validation
 
