@@ -189,6 +189,8 @@ When the output is open-ended - nuanced advice, complex reasoning, creative cont
 
 The pattern is straightforward: your agent produces output for a given input, a separate "judge" model evaluates that output against specific criteria, and the judge returns a score with reasoning.
 
+![LLM-as-judge evaluation pipeline: from test case through agent execution to structured verdict](../../assets/images/LLMAsJudgePipeline.png)
+
 ### Making it reliable
 
 The difference between a useful LLM judge and an expensive random number generator comes down to the rubric.
@@ -508,6 +510,8 @@ If you have read this far and are wondering where to start, here is the priority
 5. **Automate red teaming.** PyRIT or equivalent. Make it part of your release process.
 
 6. **Build the feedback loop.** Production failures become test cases. Test cases prevent regressions. The eval suite grows with every incident. Over time, your test suite becomes a comprehensive catalog of everything that has ever gone wrong - and a guarantee that it will not go wrong that way again.
+
+![Agent evaluation lifecycle: production failures become test cases, not folklore](../../assets/images/AgentEvaluationLifecycle.png)
 
 Testing AI agents is genuinely harder than testing traditional software. The outputs are non-deterministic, the failure modes are creative, and the tooling is still catching up. But the engineering discipline is familiar: define expected behavior, automate verification, and make the build fail when things break.
 
