@@ -3,7 +3,7 @@ title: "Your Logs Are Lying to You: Practical Structured Logging for Backend Eng
 description: "Structured logging done right for backend engineers - what to log, what to stop logging, and why your current logs are probably making incidents harder, not easier"
 pubDatetime: 2026-04-29T00:00:00Z
 author: Mitesh Shah
-featured: true
+featured: false
 draft: false
 tags:
   - observability
