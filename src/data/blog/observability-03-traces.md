@@ -1,6 +1,6 @@
 ---
 title: "Traces: Following a Request Through the Haunted House: Distributed Tracing for Backend Engineers"
-description: "Distributed tracing without the PhD - ActivitySource, Activity, span design, correlation, and why your trace waterfall probably looks like modern art"
+description: "Distributed tracing without the PhD - ActivitySource, Activity, span design, correlation, and why your trace waterfall probably looks like abstract art"
 pubDatetime: 2026-06-11T00:00:00Z
 author: Mitesh Shah
 featured: true
@@ -59,19 +59,19 @@ A trace is not one thing. It is a tree of things. Specifically:
 
 Every span carries:
 
-| Field             | What it is                                                         |
-| ----------------- | ------------------------------------------------------------------ |
-| **Trace ID**      | A globally unique identifier shared by all spans in the trace      |
-| **Span ID**       | Unique identifier for this specific span                           |
-| **Parent Span ID**| The span that created this one (empty for the root span)           |
-| **Operation name**| What this span represents (`POST /api/orders`, `SELECT orders`)    |
-| **Start time**    | When the work began                                                |
-| **Duration**      | How long it took                                                   |
-| **Status**        | Ok, Error, or Unset                                                |
-| **Attributes**    | Key-value pairs of additional context                              |
-| **Events**        | Timestamped annotations within the span                            |
+| Field              | What it is                                                      |
+| ------------------ | --------------------------------------------------------------- |
+| **Trace ID**       | A globally unique identifier shared by all spans in the trace   |
+| **Span ID**        | Unique identifier for this specific span                        |
+| **Parent Span ID** | The span that created this one (all zeros for the root span)    |
+| **Operation name** | What this span represents (`POST /api/orders`, `SELECT orders`) |
+| **Start time**     | When the work began                                             |
+| **Duration**       | How long it took                                                |
+| **Status**         | Unset, Ok, or Error                                             |
+| **Attributes**     | Key-value pairs of additional context                           |
+| **Events**         | Timestamped annotations within the span                         |
 
-When you visualize a trace, you get the waterfall chart — that horizontal bar chart where each bar is a span, indented to show parent-child relationships, and the width shows duration. A healthy trace waterfall looks like a tidy Gantt chart. An unhealthy one looks like the floor plan of a house designed by someone who kept adding extensions without permits.
+When you visualize a trace, you get the waterfall chart — that horizontal bar chart where each bar is a span, indented to show parent-child relationships, and the width shows duration. A healthy trace waterfall looks like a tidy Gantt chart. An unhealthy one looks like abstract art created by a project manager with a dependency graph and no supervision.
 
 ### The anatomy of a trace waterfall
 
@@ -219,13 +219,13 @@ A few things to notice:
 
 ### ActivityKind: what is this span doing?
 
-| Kind           | Use when                                                     |
-| -------------- | ------------------------------------------------------------ |
-| **Internal**   | Work within your service that is not a remote call           |
-| **Server**     | Handling an incoming request (e.g., your API endpoint)       |
-| **Client**     | Making an outgoing request (e.g., calling another service)   |
-| **Producer**   | Creating a message to be handled asynchronously              |
-| **Consumer**   | Processing a message from a queue                            |
+| Kind         | Use when                                                   |
+| ------------ | ---------------------------------------------------------- |
+| **Internal** | Work within your service that is not a remote call         |
+| **Server**   | Handling an incoming request (e.g., your API endpoint)     |
+| **Client**   | Making an outgoing request (e.g., calling another service) |
+| **Producer** | Creating a message to be handled asynchronously            |
+| **Consumer** | Processing a message from a queue                          |
 
 Most of the time, ASP.NET Core instrumentation creates `Server` spans for your incoming requests, and `HttpClient` instrumentation creates `Client` spans for your outgoing calls. Your custom spans for business logic are usually `Internal`.
 
@@ -286,7 +286,7 @@ A span should represent a **meaningful unit of work** that you would want to see
 - **Every method call.** Your trace should not be a stack trace with timestamps.
 - **Trivial in-memory operations.** Calculating a total, mapping DTOs, string formatting. If it takes microseconds, it does not need instrumentation.
 - **Already-instrumented operations.** ASP.NET Core, HttpClient, and EF Core all create spans automatically. Do not wrap them in another custom span that adds nothing.
-- **Loops iterations.** If you process 1000 items in a loop, create one span for "process batch" with an attribute for the count. Do not create 1000 child spans.
+- **Loop iterations.** If you process 1000 items in a loop, create one span for "process batch" with an attribute for the count. Do not create 1000 child spans.
 
 ### The "would I want to see this in the waterfall?" test
 
@@ -300,13 +300,13 @@ If the operation crosses a process/network boundary, span it. If it might be slo
 
 Span names should be low-cardinality and descriptive:
 
-| Good                          | Bad                                       | Why                                                    |
-| ----------------------------- | ----------------------------------------- | ------------------------------------------------------ |
-| `POST /api/orders`            | `POST /api/orders/ord_abc123`             | IDs in span names create cardinality bombs             |
-| `OrderService.CreateOrder`    | `CreateOrder for customer cust_42`        | Dynamic values go in attributes, not names             |
-| `SELECT orders`               | `SELECT * FROM orders WHERE id = 'abc'`   | Full queries create unbounded cardinality              |
-| `payment.charge`              | `doTheThing`                              | Names should mean something to someone reading a trace |
-| `inventory.check-availability`| `Step 3`                                  | Generic names are useless when you have 20 spans       |
+| Good                           | Bad                                     | Why                                                    |
+| ------------------------------ | --------------------------------------- | ------------------------------------------------------ |
+| `POST /api/orders`             | `POST /api/orders/ord_abc123`           | IDs in span names create cardinality bombs             |
+| `OrderService.CreateOrder`     | `CreateOrder for customer cust_42`      | Dynamic values go in attributes, not names             |
+| `SELECT orders`                | `SELECT * FROM orders WHERE id = 'abc'` | Full queries create unbounded cardinality              |
+| `payment.charge`               | `doTheThing`                            | Names should mean something to someone reading a trace |
+| `inventory.check-availability` | `Step 3`                                | Generic names are useless when you have 20 spans       |
 
 The naming rules are identical to the cardinality lessons from metrics in Part 2. Dynamic, per-request values belong in span attributes. The span name is the grouping key — it is what lets your tracing tool aggregate "all CreateOrder spans took an average of X ms" without choking on millions of unique names.
 
@@ -346,16 +346,18 @@ public class PaymentClient
 
     public async Task<PaymentResult> ChargeAsync(Order order)
     {
-        // The traceparent header is automatically injected here
-        // because Activity.Current is set by the parent span
+        // This is a business span. HttpClient instrumentation will create
+        // the actual outbound HTTP client span as its child.
         using var activity = ServiceTracing.Source.StartActivity(
             "payment.charge",
-            ActivityKind.Client);
+            ActivityKind.Internal);
 
         activity?.SetTag("payment.order_id", order.Id);
         activity?.SetTag("payment.amount", order.Total);
         activity?.SetTag("payment.currency", order.Currency);
 
+        // The traceparent header is automatically injected here
+        // by HttpClient instrumentation.
         var response = await _httpClient.PostAsJsonAsync("/api/payments", new
         {
             OrderId = order.Id,
@@ -371,15 +373,22 @@ public class PaymentClient
 }
 ```
 
+Do not wrap every `HttpClient` call in your own `ActivityKind.Client` span if you already enabled `.AddHttpClientInstrumentation()`. The instrumentation creates the client span for the actual outbound request. Your custom span should describe business work around it — `payment.charge`, `inventory.reserve`, `invoice.generate` — not duplicate the transport span because you enjoy waterfalls with extra furniture.
+
 ### Propagation across message queues
 
 HTTP propagation is mostly automatic in .NET. Message queue propagation is not. If you publish a message to RabbitMQ, Azure Service Bus, or Kafka, you need to explicitly inject the trace context into the message headers and extract it on the consumer side.
 
 ```cs file="Infrastructure/MessagePublisher.cs"
 using System.Diagnostics;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 
 public class MessagePublisher
 {
+    private static readonly TextMapPropagator Propagator =
+        Propagators.DefaultTextMapPropagator;
+
     public async Task PublishAsync<T>(string topic, T message)
     {
         using var activity = ServiceTracing.Source.StartActivity(
@@ -389,12 +398,10 @@ public class MessagePublisher
         var headers = new Dictionary<string, string>();
 
         // Inject current trace context into message headers
-        // In production, prefer Propagators.DefaultTextMapPropagator.Inject()
-        // for spec-compliant formatting. Manual here for clarity.
-        if (activity?.Context is ActivityContext context)
-        {
-            headers["traceparent"] = $"00-{context.TraceId}-{context.SpanId}-{(context.TraceFlags.HasFlag(ActivityTraceFlags.Recorded) ? "01" : "00")}";
-        }
+        Propagator.Inject(
+            new PropagationContext(activity?.Context ?? default, Baggage.Current),
+            headers,
+            static (carrier, key, value) => carrier[key] = value);
 
         activity?.SetTag("messaging.system", "rabbitmq");
         activity?.SetTag("messaging.destination.name", topic);
@@ -407,23 +414,29 @@ public class MessagePublisher
 
 ```cs file="Infrastructure/MessageConsumer.cs"
 using System.Diagnostics;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 
 public class MessageConsumer
 {
+    private static readonly TextMapPropagator Propagator =
+        Propagators.DefaultTextMapPropagator;
+
     public async Task HandleMessageAsync<T>(T message, IDictionary<string, string> headers)
     {
-        ActivityContext parentContext = default;
-
         // Extract trace context from message headers
-        if (headers.TryGetValue("traceparent", out var traceparent))
-        {
-            ActivityContext.TryParse(traceparent, null, out parentContext);
-        }
+        var parentContext = Propagator.Extract(
+            default,
+            headers,
+            static (carrier, key) =>
+                carrier.TryGetValue(key, out var value)
+                    ? new[] { value }
+                    : Enumerable.Empty<string>());
 
         using var activity = ServiceTracing.Source.StartActivity(
             "process OrderCreated",
             ActivityKind.Consumer,
-            parentContext: parentContext);
+            parentContext: parentContext.ActivityContext);
 
         activity?.SetTag("messaging.system", "rabbitmq");
         activity?.SetTag("messaging.operation.type", "process");
@@ -433,6 +446,8 @@ public class MessageConsumer
     }
 }
 ```
+
+Yes, this is more ceremony than HTTP. That is the tax you pay for async boundaries. Use the propagator instead of hand-building `traceparent`; it also handles `tracestate` and baggage, which are exactly the details people forget until a tool quietly stops correlating things.
 
 :::warning[The propagation gap]
 The number one reason your distributed traces are disconnected is a propagation failure. Some service in the middle either swallowed the trace context, used a non-standard HTTP client, or published a message without injecting trace headers. If your traces end abruptly at a service boundary, check propagation first. It is always propagation.
@@ -518,12 +533,12 @@ try
 catch (Exception ex)
 {
     activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-    activity?.RecordException(ex); // convenience method that adds an exception event
+    activity?.RecordException(ex); // OpenTelemetry extension method
     throw;
 }
 ```
 
-`RecordException` is a helper that creates an event with the exception details (type, message, stacktrace) in the standard OpenTelemetry format. Use it. It is less typing than building the `ActivityEvent` manually, and tracing tools know how to render it.
+`RecordException` is an OpenTelemetry extension method from `OpenTelemetry.Trace`, not a method on `System.Diagnostics.Activity` itself. Use it when you have the OpenTelemetry API package referenced; on .NET 9+, `Activity.AddException(ex)` is the built-in alternative. Either way, the goal is the same: record exception details in a standard shape that tracing tools know how to render, instead of inventing your own exception event because apparently exceptions needed a side quest.
 
 :::info[Status semantics]
 `Unset` means "I didn't explicitly say whether this succeeded." `Ok` means "this definitely worked." `Error` means "this definitely failed." For server spans, the OpenTelemetry spec says to leave status as `Unset` for successful requests and only set `Error` for 5xx responses. For your own custom spans, setting `Ok` explicitly on success is fine and helps with trace analysis.
@@ -539,7 +554,7 @@ Someone reads the tracing documentation and decides that every method should hav
 
 Over-instrumented traces are like logs that say "entering method X" and "exiting method X" for every function. Technically complete, practically useless. The signal-to-noise ratio is worse because more is not more. Your tracing backend stores and indexes every span, your sampling rate needs to be lower to compensate for the volume, and developers stop opening traces because parsing 47 spans to find the 3 that matter is not anyone's idea of productivity.
 
-**The fix:** instrument at meaningful boundaries. Network calls, database queries, significant business operations, and async handoffs. If you can not explain why a span helps debugging without referencing the source code, it probably does not.
+**The fix:** instrument at meaningful boundaries. Network calls, database queries, significant business operations, and async handoffs. If you cannot explain why a span helps debugging without referencing the source code, it probably does not.
 
 ### Missing propagation (the silent killer)
 
@@ -615,7 +630,7 @@ Production tracing at 100% sampling is expensive. Most systems need sampling —
 **Better approaches:**
 
 - **Tail-based sampling:** decide whether to keep a trace _after_ it completes, based on whether it contains errors, high latency, or other interesting signals. The OpenTelemetry Collector supports this.
-- **Head-based with bias:** sample 100% of error traces, 10% of healthy traces. Capture all the interesting stuff, sample down the boring stuff.
+- **Head-based with bias:** sample more aggressively for traffic you can identify at the start, such as critical routes, important tenants, or canary deployments. Head-based sampling cannot know whether a request will fail later. If it could predict the future, we would use it for sprint planning and retire.
 - **Always sample in non-production:** your staging environment is cheap. Sample everything there, catch instrumentation bugs before they hit production.
 
 ### Ignoring async gaps
@@ -638,6 +653,7 @@ This makes the gap visible in the trace, even though there is no span covering i
 This is where it all comes together. Like metrics in Part 2, you configure OpenTelemetry in your service startup to collect and export traces.
 
 :::info[Packages for tracing]
+
 ```bash
 dotnet add package OpenTelemetry.Extensions.Hosting
 dotnet add package OpenTelemetry.Instrumentation.AspNetCore
@@ -647,9 +663,13 @@ dotnet add package OpenTelemetry.Exporter.OpenTelemetryProtocol
 ```
 
 Same family as the metrics packages from Part 2. If you already have `OpenTelemetry.Extensions.Hosting`, you are adding instrumentation libraries and pointing them at the same exporter. The setup is converging, which is kind of the point.
+
+The `RecordException` helper shown earlier comes from the OpenTelemetry API package and the `OpenTelemetry.Trace` namespace. If your IDE says `Activity` has no such method, it is not gaslighting you this time.
 :::
 
 ```cs file="Program.cs"
+using OpenTelemetry.Trace;
+
 builder.Services.AddOpenTelemetry()
     .WithTracing(tracing =>
     {
@@ -673,20 +693,28 @@ builder.Services.AddOpenTelemetry()
 
 That is the minimum useful configuration. Incoming requests, outgoing calls, database queries, your custom spans, and an exporter to get them somewhere useful.
 
+:::warning[About SQL text]
+`SetDbStatementForText = true` can capture query text in spans. Depending on your provider and query shape, that may include values you do not want in telemetry. Useful during investigation; dangerous as a thoughtless production default. Observability data is still data. It does not become safe because it has a cute waterfall UI.
+:::
+
 ### The complete picture: metrics AND tracing
 
 If you did Part 2 properly, your `Program.cs` already has `.WithMetrics(...)`. Adding tracing is just another chain call:
 
 ```cs file="Program.cs"
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+
 builder.Services.AddOpenTelemetry()
+    .UseOtlpExporter()
     .WithMetrics(metrics =>
     {
         metrics
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
             .AddRuntimeInstrumentation()
-            .AddMeter(ServiceMetrics.MeterName)
-            .AddOtlpExporter();
+            .AddMeter(ServiceMetrics.MeterName);
     })
     .WithTracing(tracing =>
     {
@@ -698,23 +726,22 @@ builder.Services.AddOpenTelemetry()
                 options.SetDbStatementForText = true;
                 options.RecordException = true;
             })
-            .AddSource(ServiceTracing.SourceName)
-            .AddOtlpExporter();
+            .AddSource(ServiceTracing.SourceName);
     });
 ```
 
-One `AddOpenTelemetry()` call. Two signal types. Same exporter endpoint. Same destination. This is the OTel convergence in action — your application sends both signals through the same pipeline to the same backend, using the same infrastructure.
+One `AddOpenTelemetry()` call. Two signal types. One OTLP exporter. Same destination. This is the OTel convergence in action — your application sends both signals through the same pipeline to the same backend, using the same infrastructure.
 
 ### Configuring the OTLP exporter
 
 By default, the OTLP exporter sends to `http://localhost:4317` (gRPC) or `http://localhost:4318` (HTTP/protobuf). In production, you point it at an OpenTelemetry Collector or directly at your backend:
 
 ```cs
-.AddOtlpExporter(options =>
+.UseOtlpExporter(otlpOptions =>
 {
-    options.Endpoint = new Uri("https://otel-collector.internal:4317");
-    options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
-});
+    otlpOptions.Endpoint = new Uri("https://otel-collector.internal:4317");
+    otlpOptions.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+})
 ```
 
 Or via environment variables (preferred for containerized deployments):
@@ -752,7 +779,8 @@ This is the tracing equivalent of suppressing health check logs from Part 1. Sam
 For production, you almost certainly want sampling:
 
 ```cs
-.SetSampler(new TraceIdRatioBasedSampler(0.1)) // sample 10% of traces
+.SetSampler(new ParentBasedSampler(
+    new TraceIdRatioBasedSampler(0.1))) // sample 10% of root traces
 ```
 
 For development, sample everything:
@@ -761,88 +789,7 @@ For development, sample everything:
 .SetSampler(new AlwaysOnSampler())
 ```
 
-The `TraceIdRatioBasedSampler` is head-based sampling — the decision is made at the root span. All child spans in the same trace respect the same decision, so you never get half a trace. For tail-based sampling (keeping traces based on whether they contain errors), you need the OpenTelemetry Collector's `tail_sampling` processor, which makes the decision after the trace completes.
-
-## The three pillars converge: logs, metrics, and traces unified
-
-If you have been following this series, you have now seen OpenTelemetry show up in logs (trace/span IDs in log entries, Part 1), metrics (`System.Diagnostics.Metrics` with OTel export, Part 2), and traces (`ActivitySource`/`Activity` with OTel export, this post). That is the point — it is not three separate things to learn. It is one framework that connects all three signals through shared context.
-
-### How trace IDs appear in logs
-
-When an `Activity` is active (which it is for every incoming HTTP request in an ASP.NET Core app with tracing configured), the trace ID and span ID are available. Log frameworks can include them automatically:
-
-```cs file="Program.cs"
-builder.Host.UseSerilog((context, configuration) =>
-{
-    configuration
-        .ReadFrom.Configuration(context.Configuration)
-        .Enrich.FromLogContext()
-        .Enrich.WithProperty("Application", "OrderService")
-        // This enricher adds TraceId and SpanId to every log entry
-        .Enrich.With<ActivityEnricher>()
-        .WriteTo.Console()
-        .WriteTo.Seq("http://localhost:5341");
-});
-```
-
-```cs file="Diagnostics/ActivityEnricher.cs"
-using System.Diagnostics;
-using Serilog.Core;
-using Serilog.Events;
-
-public class ActivityEnricher : ILogEventEnricher
-{
-    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
-    {
-        var activity = Activity.Current;
-        if (activity is null) return;
-
-        logEvent.AddPropertyIfAbsent(
-            propertyFactory.CreateProperty("TraceId", activity.TraceId.ToString()));
-        logEvent.AddPropertyIfAbsent(
-            propertyFactory.CreateProperty("SpanId", activity.SpanId.ToString()));
-        logEvent.AddPropertyIfAbsent(
-            propertyFactory.CreateProperty("ParentSpanId", activity.ParentSpanId.ToString()));
-    }
-}
-```
-
-Now every log entry within a traced request carries the trace ID. You can go from a log line ("payment failed for order X") to the full distributed trace (the entire request journey across all services) with a single click in tools that support it. Seq, Grafana, Jaeger, and most modern observability platforms can do this.
-
-This is the killer feature of unified telemetry. You do not have three isolated data stores. You have three views of the same story, connected by shared identifiers.
-
-### How metrics correlate with traces
-
-The connection between metrics and traces is more subtle. Metrics are aggregated (you lose individual request identity), but the relationship works in the other direction:
-
-1. A metric alert fires: "p99 latency for POST /api/orders exceeded 2s"
-2. You query your tracing backend: "show me traces for POST /api/orders where duration > 2s in the last 15 minutes"
-3. You find the slow traces and see exactly where the time was spent
-
-Some tools (Grafana Tempo, Honeycomb) support **exemplars** — individual trace IDs attached to metric data points. When you see a latency spike on a graph, you can click it and jump directly to a representative trace. This is where the "three pillars" metaphor stops being marketing and starts being workflow.
-
-The correlation is:
-
-- **Log → Trace:** via trace ID in log entry
-- **Metric → Trace:** via exemplars or time-based query
-- **Trace → Logs:** filter logs by the trace's trace ID
-- **Trace → Metrics:** check if the trace's span attributes match any metric anomaly
-
-### The OpenTelemetry thread across the series
-
-Let's step back and look at what we have built across three posts:
-
-| Signal  | .NET API                       | OTel role                    | Connected via                    |
-| ------- | ------------------------------ | ---------------------------- | -------------------------------- |
-| Logs    | `ILogger` + Serilog            | TraceId/SpanId enrichment    | Trace context in log entries     |
-| Metrics | `System.Diagnostics.Metrics`   | Collection and export        | Exemplars, time correlation      |
-| Traces  | `System.Diagnostics.Activity`  | Collection, export, propagation | Trace ID as the primary key   |
-
-OpenTelemetry is not a thing you add on top. It is the connective tissue between your existing .NET APIs and the observability backends that visualize everything. The .NET team designed `Activity` and `Meter` to be OpenTelemetry-compatible from the start. OTel provides the pipeline — collecting from those APIs, enriching, sampling, batching, and exporting. Your code uses .NET APIs. OTel handles the plumbing. The backends handle the pretty pictures.
-
-:::info[The OTel convergence]
-If you have been following along, you have now seen OpenTelemetry show up in logs, metrics, and traces. That is the point — it is not a separate thing to learn, it is the glue. One SDK, one set of exporters, one configuration pattern, three signal types, all sharing context through trace IDs and span IDs. The "three pillars of observability" stop being three separate projects and become one coherent telemetry pipeline.
-:::
+`TraceIdRatioBasedSampler` is head-based sampling: the root trace is sampled based on the trace ID. Wrapping it in `ParentBasedSampler` makes downstream services respect the upstream sampling decision instead of each service confidently making its own little democracy. That is how you avoid fractured traces. For tail-based sampling (keeping traces based on whether they contain errors), you need the OpenTelemetry Collector's `tail_sampling` processor, which makes the decision after the trace completes.
 
 ## Practical debugging with traces: reading the waterfall
 
@@ -859,7 +806,7 @@ Open the trace. Look at the waterfall. The widest bar (relative to its parent) i
 - A retry loop waiting between attempts
 - A synchronous call that should have been async
 
-The waterfall makes this visual. You do not need to compute anything. The slow thing is the wide bar.
+The waterfall makes this visual. You do not need to compute anything. The slow thing is the wide bar. This is the rare debugging workflow where "look for the biggest rectangle" is a professional technique.
 
 ### Finding the error
 
@@ -902,6 +849,65 @@ Sometimes the waterfall shows a gap — time passes between the end of one child
 
 If you see a 500ms gap with no spans, check if there is un-instrumented work. Or check your thread pool metrics from Part 2 — thread pool queue length spikes correlate with "gap" time in traces.
 
+## The three pillars converge: logs, metrics, and traces unified
+
+If you have been following this series, you have now seen OpenTelemetry show up in logs (trace/span IDs in log entries, Part 1), metrics (`System.Diagnostics.Metrics` with OTel export, Part 2), and traces (`ActivitySource`/`Activity` with OTel export, this post). That is the point — it is not three separate things to learn. It is one framework that connects all three signals through shared context.
+
+### How trace IDs appear in logs
+
+When an `Activity` is active (which it is for every incoming HTTP request in an ASP.NET Core app with tracing configured), the trace ID and span ID are available. Modern logging stacks can include them automatically.
+
+```cs file="Program.cs"
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .Enrich.FromLogContext()
+        .Enrich.WithProperty("Application", "OrderService")
+        .WriteTo.Console()
+        .WriteTo.Seq("http://localhost:5341");
+});
+```
+
+Serilog 3 can attach `TraceId` and `SpanId` from `System.Diagnostics.Activity` to log events without a custom enricher. Some sinks or older setups may need configuration to render those properties, because logging pipelines enjoy one last bit of ceremony before becoming useful.
+
+Now every log entry within a traced request can carry the trace ID. You can go from a log line ("payment failed for order X") to the full distributed trace (the entire request journey across all services) with a single click in tools that support it. Seq, Grafana, Jaeger, and most modern observability platforms can do this.
+
+This is the killer feature of unified telemetry. You do not have three isolated data stores. You have three views of the same story, connected by shared identifiers.
+
+### How metrics correlate with traces
+
+The connection between metrics and traces is more subtle. Metrics are aggregated (you lose individual request identity), but the relationship works in the other direction:
+
+1. A metric alert fires: "p99 latency for POST /api/orders exceeded 2s"
+2. You query your tracing backend: "show me traces for POST /api/orders where duration > 2s in the last 15 minutes"
+3. You find the slow traces and see exactly where the time was spent
+
+Some metrics pipelines support **exemplars** — individual trace IDs attached to metric data points. Prometheus/OpenMetrics plus Grafana can show those exemplars and link them to a trace backend like Tempo. When you see a latency spike on a graph, you can click it and jump directly to a representative trace. This is where the "three pillars" metaphor stops being marketing and starts being workflow.
+
+The correlation is:
+
+- **Log → Trace:** via trace ID in log entry
+- **Metric → Trace:** via exemplars or time-based query
+- **Trace → Logs:** filter logs by the trace's trace ID
+- **Trace → Metrics:** check if the trace's span attributes match any metric anomaly
+
+### The OpenTelemetry thread across the series
+
+Let's step back and look at what we have built across three posts:
+
+| Signal  | .NET API                      | OTel role                       | Connected via                |
+| ------- | ----------------------------- | ------------------------------- | ---------------------------- |
+| Logs    | `ILogger` + Serilog           | TraceId/SpanId enrichment       | Trace context in log entries |
+| Metrics | `System.Diagnostics.Metrics`  | Collection and export           | Exemplars, time correlation  |
+| Traces  | `System.Diagnostics.Activity` | Collection, export, propagation | Trace ID as the primary key  |
+
+OpenTelemetry is not a thing you add on top. It is the connective tissue between your existing .NET APIs and the observability backends that visualize everything. The .NET team designed `Activity` and `Meter` to be OpenTelemetry-compatible from the start. OTel provides the pipeline — collecting from those APIs, enriching, sampling, batching, and exporting. Your code uses .NET APIs. OTel handles the plumbing. The backends handle the pretty pictures.
+
+:::info[The OTel convergence]
+If you have been following along, you have now seen OpenTelemetry show up in logs, metrics, and traces. That is the point — it is not a separate thing to learn, it is the glue. One SDK, one set of exporters, one configuration pattern, three signal types, all sharing context through trace IDs and span IDs. The "three pillars of observability" stop being three separate projects and become one coherent telemetry pipeline.
+:::
+
 ## Wrapping up
 
 Logs tell you what happened to a specific request within a service. Metrics tell you how the system is behaving overall. Traces tell you what happened to a specific request _across your entire system_ — the complete journey, with timing, hierarchy, and causality.
@@ -913,7 +919,7 @@ The practical takeaway:
 - **Propagation is everything.** If trace context does not cross service boundaries, you have single-service traces pretending to be distributed. Check your headers.
 - **Name spans well.** Low-cardinality, descriptive names. Dynamic values go in attributes. Same cardinality rules as metrics.
 - **Add attributes generously.** Unlike metric labels, span attributes handle high-cardinality values fine. Add the context that makes debugging possible.
-- **Sample in production.** 100% trace collection is expensive. Use head-based sampling with error bias, or tail-based sampling in the collector.
+- **Sample in production.** 100% trace collection is expensive. Use parent-based head sampling for predictable volume, or tail-based sampling in the collector when you need to keep slow/error traces.
 - **Connect the three signals.** Trace IDs in logs, exemplars on metrics, shared export pipeline. The value multiplies when they connect.
 
 Distributed tracing is where the "three pillars" metaphor stops being a conference talk slide and starts being a practical debugging workflow. A log line leads you to a trace. The trace shows you where the time went. Metrics confirm whether it is an isolated event or a pattern. That loop — from alert to trace to root cause — is the payoff of wiring these three signals together through OpenTelemetry.
@@ -923,12 +929,12 @@ In the next post, we will talk about **alerts** — because all this observabili
 :::info[Observability series]
 This post is part of **Observability for Backend Engineers Who Don't Want Dashboard Theater**, a series about production visibility that tries very hard not to become a collection of expensive screenshots.
 
-| Part | Post                                                                                             |
-| ---- | ------------------------------------------------------------------------------------------------ |
-| 1    | [Your Logs Are Lying to You](/blog/posts/observability-01-logs)                                  |
-| 2    | [Metrics: Because "It Feels Slow" Isn't an SLO](/blog/posts/observability-02-metrics)            |
-| 3    | **Traces: Following a Request Through the Haunted House** ← you are here                         |
-| 4    | Alerts That Don't Make You Hate Your Phone _(coming next)_                                       |
+| Part | Post                                                                                  |
+| ---- | ------------------------------------------------------------------------------------- |
+| 1    | [Your Logs Are Lying to You](/blog/posts/observability-01-logs)                       |
+| 2    | [Metrics: Because "It Feels Slow" Isn't an SLO](/blog/posts/observability-02-metrics) |
+| 3    | **Traces: Following a Request Through the Haunted House** ← you are here              |
+| 4    | Alerts That Don't Make You Hate Your Phone _(coming next)_                            |
 
 :::
 
